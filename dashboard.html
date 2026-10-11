@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Daily Bias Dashboard</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --card-bg: #161b22;
+    --border: #30363d;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --buy: #3fb950;
+    --sell: #f85149;
+    --avoid: #8b949e;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 40px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  h1 { font-size: 22px; margin-bottom: 4px; }
+  .subtitle { color: var(--muted); font-size: 13px; margin-bottom: 20px; }
+
+  .summary-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+    padding: 14px 16px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .summary-counts {
+    display: flex;
+    gap: 16px;
+    font-size: 13px;
+    margin-right: auto;
+  }
+  .summary-counts span.count-buy { color: var(--buy); font-weight: 700; }
+  .summary-counts span.count-sell { color: var(--sell); font-weight: 700; }
+  .summary-counts span.count-avoid { color: var(--avoid); font-weight: 700; }
+  .filter-btn {
+    background: #21262d;
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .filter-btn:hover { background: #30363d; }
+  .filter-btn.active { background: #1f6feb; border-color: #1f6feb; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+  }
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+  .card.buy { border-left-color: var(--buy); }
+  .card.sell { border-left-color: var(--sell); }
+  .card.avoid { border-left-color: var(--avoid); }
+  .card.hidden { display: none; }
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .pair { font-size: 17px; font-weight: 600; letter-spacing: 0.5px; }
+  .badge {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.5px;
+  }
+  .badge.buy { background: rgba(63,185,80,0.15); color: var(--buy); }
+  .badge.sell { background: rgba(248,81,73,0.15); color: var(--sell); }
+  .badge.avoid { background: rgba(139,148,158,0.15); color: var(--avoid); }
+  .reason { color: var(--muted); font-size: 13px; margin-bottom: 10px; min-height: 34px; }
+  .mini-chart {
+    width: 100%;
+    height: auto;
+    background: #0d1117;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-bottom: 12px;
+  }
+  .candles {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+    padding-top: 10px;
+  }
+  .candle { display: flex; gap: 10px; }
+  .candle .label { min-width: 90px; color: var(--text); font-weight: 500; }
+  footer { margin-top: 32px; color: var(--muted); font-size: 12px; }
+</style>
+</head>
+<body>
+  <h1>Daily Bias Dashboard</h1>
+  <div class="subtitle">Generated 2026-10-11 12:11 &middot; Source: TradingView (Pepperstone feed), Daily TF, Brisbane 7am candle</div>
+
+  <div class="summary-bar">
+    <div class="summary-counts">
+      <span><span class="count-buy">4</span> BUY</span>
+      <span><span class="count-sell">3</span> SELL</span>
+      <span><span class="count-avoid">0</span> AVOID</span>
+    </div>
+    <button class="filter-btn active" data-filter="ALL">All</button>
+    <button class="filter-btn" data-filter="BUY">BUY</button>
+    <button class="filter-btn" data-filter="SELL">SELL</button>
+    <button class="filter-btn" data-filter="AVOID">AVOID</button>
+  </div>
+
+  <div class="grid" id="grid">
+    
+        <div class="card buy" data-bias="BUY">
+          <div class="card-header">
+            <span class="pair">XAUUSD</span>
+            <span class="badge buy">BUY</span>
+          </div>
+          <div class="reason">Swept prior high and closed above it (confirmed breakout)</div>
+          
+    <svg width="220" height="130" viewBox="0 0 220 130" class="mini-chart">
+      
+      <line x1="4" y1="72.6" x2="216" y2="72.6" stroke="#8b949e" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="4" y1="107.5" x2="216" y2="107.5" stroke="#8b949e" stroke-width="1" stroke-dasharray="3,3"/>
+    
+      
+          <line x1="66.0" y1="72.6" x2="66.0" y2="107.5" stroke="#3fb950" stroke-width="2" opacity="0.55"/>
+          <rect x="53.0" y="82.8" width="26" height="15.200000000000003" fill="#3fb950" opacity="0.55"/>
+        
+      
+          <line x1="158.4" y1="22.5" x2="158.4" y2="84.9" stroke="#3fb950" stroke-width="2" opacity="1"/>
+          <rect x="145.4" y="33.4" width="26" height="48.1" fill="#3fb950" opacity="1"/>
+        
+      <circle cx="158.4" cy="33.4" r="3" fill="#3fb950"/>
+      <text x="66.0" y="128" font-size="9" fill="#8b949e" text-anchor="middle">C1</text>
+      <text x="158.4" y="128" font-size="9" fill="#e6edf3" text-anchor="middle">C2</text>
+    </svg>
+    
+          <div class="candles">
+            <div class="candle">
+              <span class="label">Thursday (C1)</span>
+              <span>H 4146.07</span>
+              <span>L 4103.02</span>
+            </div>
+            <div class="candle">
+              <span class="label">Friday (C2)</span>
+              <span>H 4207.73</span>
+              <span>L 4130.8</span>
+              <span>C 4194.35</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card buy" data-bias="BUY">
+          <div class="card-header">
+            <span class="pair">GBPJPY</span>
+            <span class="badge buy">BUY</span>
+          </div>
+          <div class="reason">Swept prior high and closed above it (confirmed breakout)</div>
+          
+    <svg width="220" height="130" viewBox="0 0 220 130" class="mini-chart">
+      
+      <line x1="4" y1="41.6" x2="216" y2="41.6" stroke="#8b949e" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="4" y1="107.5" x2="216" y2="107.5" stroke="#8b949e" stroke-width="1" stroke-dasharray="3,3"/>
+    
+      
+          <line x1="66.0" y1="41.6" x2="66.0" y2="107.5" stroke="#3fb950" stroke-width="2" opacity="0.55"/>
+          <rect x="53.0" y="69.6" width="26" height="7.900000000000006" fill="#3fb950" opacity="0.55"/>
+        
+      
+          <line x1="158.4" y1="22.5" x2="158.4" y2="85.5" stroke="#3fb950" stroke-width="2" opacity="1"/>
+          <rect x="145.4" y="35.0" width="26" height="45.099999999999994" fill="#3fb950" opacity="1"/>
+        
+      <circle cx="158.4" cy="35.0" r="3" fill="#3fb950"/>
+      <text x="66.0" y="128" font-size="9" fill="#8b949e" text-anchor="middle">C1</text>
+      <text x="158.4" y="128" font-size="9" fill="#e6edf3" text-anchor="middle">C2</text>
+    </svg>
+    
+          <div class="candles">
+            <div class="candle">
+              <span class="label">Thursday (C1)</span>
+              <span>H 209.394</span>
+              <span>L 208.188</span>
+            </div>
+            <div class="candle">
+              <span class="label">Friday (C2)</span>
+              <span>H 209.744</span>
+              <span>L 208.59</span>
+              <span>C 209.515</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card sell" data-bias="SELL">
+          <div class="card-header">
+            <span class="pair">GBPUSD</span>
+            <span class="badge sell">SELL</span>
+          </div>
+          <div class="reason">Swept prior high but closed back below it (failed breakout / reversal)</div>
+          
+    <svg width="220" height="130" viewBox="0 0 220 130" class="mini-chart">
+      
+      <line x1="4" y1="24.7" x2="216" y2="24.7" stroke="#8b949e" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="4" y1="107.5" x2="216" y2="107.5" stroke="#8b949e" stroke-width="1" stroke-dasharray="3,3"/>
+    
+      
+          <line x1="66.0" y1="24.7" x2="66.0" y2="107.5" stroke="#3fb950" stroke-width="2" opacity="0.55"/>
+          <rect x="53.0" y="49.5" width="26" height="26.200000000000003" fill="#3fb950" opacity="0.55"/>
+        
+      
+          <line x1="158.4" y1="22.5" x2="158.4" y2="79.6" stroke="#3fb950" stroke-width="2" opacity="1"/>
+          <rect x="145.4" y="40.6" width="26" height="23.4" fill="#3fb950" opacity="1"/>
+        
+      <circle cx="158.4" cy="40.6" r="3" fill="#f85149"/>
+      <text x="66.0" y="128" font-size="9" fill="#8b949e" text-anchor="middle">C1</text>
+      <text x="158.4" y="128" font-size="9" fill="#e6edf3" text-anchor="middle">C2</text>
+    </svg>
+    
+          <div class="candles">
+            <div class="candle">
+              <span class="label">Thursday (C1)</span>
+              <span>H 1.32483</span>
+              <span>L 1.31842</span>
+            </div>
+            <div class="candle">
+              <span class="label">Friday (C2)</span>
+              <span>H 1.325</span>
+              <span>L 1.32058</span>
+              <span>C 1.3236</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card buy" data-bias="BUY">
+          <div class="card-header">
+            <span class="pair">EURGBP</span>
+            <span class="badge buy">BUY</span>
+          </div>
+          <div class="reason">Swept prior low but closed back above it (failed breakdown / reversal)</div>
+          
+    <svg width="220" height="130" viewBox="0 0 220 130" class="mini-chart">
+      
+      <line x1="4" y1="22.5" x2="216" y2="22.5" stroke="#8b949e" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="4" y1="105.7" x2="216" y2="105.7" stroke="#8b949e" stroke-width="1" stroke-dasharray="3,3"/>
+    
+      
+          <line x1="66.0" y1="22.5" x2="66.0" y2="105.7" stroke="#3fb950" stroke-width="2" opacity="0.55"/>
+          <rect x="53.0" y="60.6" width="26" height="45.1" fill="#3fb950" opacity="0.55"/>
+        
+      
+          <line x1="158.4" y1="28.1" x2="158.4" y2="107.5" stroke="#f85149" stroke-width="2" opacity="1"/>
+          <rect x="145.4" y="84.8" width="26" height="7.6000000000000085" fill="#f85149" opacity="1"/>
+        
+      <circle cx="158.4" cy="92.4" r="3" fill="#3fb950"/>
+      <text x="66.0" y="128" font-size="9" fill="#8b949e" text-anchor="middle">C1</text>
+      <text x="158.4" y="128" font-size="9" fill="#e6edf3" text-anchor="middle">C2</text>
+    </svg>
+    
+          <div class="candles">
+            <div class="candle">
+              <span class="label">Thursday (C1)</span>
+              <span>H 0.84871</span>
+              <span>L 0.84589</span>
+            </div>
+            <div class="candle">
+              <span class="label">Friday (C2)</span>
+              <span>H 0.84852</span>
+              <span>L 0.84583</span>
+              <span>C 0.84634</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card sell" data-bias="SELL">
+          <div class="card-header">
+            <span class="pair">EURUSD</span>
+            <span class="badge sell">SELL</span>
+          </div>
+          <div class="reason">Swept prior low and closed below it (confirmed breakdown)</div>
+          
+    <svg width="220" height="130" viewBox="0 0 220 130" class="mini-chart">
+      
+      <line x1="4" y1="22.5" x2="216" y2="22.5" stroke="#8b949e" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="4" y1="93.0" x2="216" y2="93.0" stroke="#8b949e" stroke-width="1" stroke-dasharray="3,3"/>
+    
+      
+          <line x1="66.0" y1="22.5" x2="66.0" y2="93.0" stroke="#3fb950" stroke-width="2" opacity="0.55"/>
+          <rect x="53.0" y="38.5" width="26" height="37.2" fill="#3fb950" opacity="0.55"/>
+        
+      
+          <line x1="158.4" y1="54.9" x2="158.4" y2="107.5" stroke="#f85149" stroke-width="2" opacity="1"/>
+          <rect x="145.4" y="82.0" width="26" height="12.299999999999997" fill="#f85149" opacity="1"/>
+        
+      <circle cx="158.4" cy="94.3" r="3" fill="#f85149"/>
+      <text x="66.0" y="128" font-size="9" fill="#8b949e" text-anchor="middle">C1</text>
+      <text x="158.4" y="128" font-size="9" fill="#e6edf3" text-anchor="middle">C2</text>
+    </svg>
+    
+          <div class="candles">
+            <div class="candle">
+              <span class="label">Thursday (C1)</span>
+              <span>H 1.12768</span>
+              <span>L 1.12028</span>
+            </div>
+            <div class="candle">
+              <span class="label">Friday (C2)</span>
+              <span>H 1.12428</span>
+              <span>L 1.11876</span>
+              <span>C 1.12015</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card buy" data-bias="BUY">
+          <div class="card-header">
+            <span class="pair">AUDJPY</span>
+            <span class="badge buy">BUY</span>
+          </div>
+          <div class="reason">Swept prior high and closed above it (confirmed breakout)</div>
+          
+    <svg width="220" height="130" viewBox="0 0 220 130" class="mini-chart">
+      
+      <line x1="4" y1="55.3" x2="216" y2="55.3" stroke="#8b949e" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="4" y1="107.5" x2="216" y2="107.5" stroke="#8b949e" stroke-width="1" stroke-dasharray="3,3"/>
+    
+      
+          <line x1="66.0" y1="55.3" x2="66.0" y2="107.5" stroke="#f85149" stroke-width="2" opacity="0.55"/>
+          <rect x="53.0" y="75.9" width="26" height="11.0" fill="#f85149" opacity="0.55"/>
+        
+      
+          <line x1="158.4" y1="22.5" x2="158.4" y2="98.9" stroke="#3fb950" stroke-width="2" opacity="1"/>
+          <rect x="145.4" y="23.2" width="26" height="72.3" fill="#3fb950" opacity="1"/>
+        
+      <circle cx="158.4" cy="23.2" r="3" fill="#3fb950"/>
+      <text x="66.0" y="128" font-size="9" fill="#8b949e" text-anchor="middle">C1</text>
+      <text x="158.4" y="128" font-size="9" fill="#e6edf3" text-anchor="middle">C2</text>
+    </svg>
+    
+          <div class="candles">
+            <div class="candle">
+              <span class="label">Thursday (C1)</span>
+              <span>H 110.227</span>
+              <span>L 109.626</span>
+            </div>
+            <div class="candle">
+              <span class="label">Friday (C2)</span>
+              <span>H 110.604</span>
+              <span>L 109.725</span>
+              <span>C 110.596</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card sell" data-bias="SELL">
+          <div class="card-header">
+            <span class="pair">USDJPY</span>
+            <span class="badge sell">SELL</span>
+          </div>
+          <div class="reason">Swept prior high but closed back below it (failed breakout / reversal)</div>
+          
+    <svg width="220" height="130" viewBox="0 0 220 130" class="mini-chart">
+      
+      <line x1="4" y1="28.5" x2="216" y2="28.5" stroke="#8b949e" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="4" y1="107.5" x2="216" y2="107.5" stroke="#8b949e" stroke-width="1" stroke-dasharray="3,3"/>
+    
+      
+          <line x1="66.0" y1="28.5" x2="66.0" y2="107.5" stroke="#f85149" stroke-width="2" opacity="0.55"/>
+          <rect x="53.0" y="61.7" width="26" height="10.5" fill="#f85149" opacity="0.55"/>
+        
+      
+          <line x1="158.4" y1="22.5" x2="158.4" y2="84.7" stroke="#3fb950" stroke-width="2" opacity="1"/>
+          <rect x="145.4" y="35.2" width="26" height="45.0" fill="#3fb950" opacity="1"/>
+        
+      <circle cx="158.4" cy="35.2" r="3" fill="#f85149"/>
+      <text x="66.0" y="128" font-size="9" fill="#8b949e" text-anchor="middle">C1</text>
+      <text x="158.4" y="128" font-size="9" fill="#e6edf3" text-anchor="middle">C2</text>
+    </svg>
+    
+          <div class="candles">
+            <div class="candle">
+              <span class="label">Thursday (C1)</span>
+              <span>H 158.367</span>
+              <span>L 157.513</span>
+            </div>
+            <div class="candle">
+              <span class="label">Friday (C2)</span>
+              <span>H 158.432</span>
+              <span>L 157.759</span>
+              <span>C 158.295</span>
+            </div>
+          </div>
+        </div>
+        
+  </div>
+
+  <footer>
+    Rules: Sweep + reclaim = reversal bias &middot; Sweep + close-through = continuation bias &middot; No sweep or sweep-both-closed-middle = AVOID
+  </footer>
+
+  <script>
+    const buttons = document.querySelectorAll('.filter-btn');
+    const cards = document.querySelectorAll('.card');
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        buttons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const filter = btn.dataset.filter;
+        cards.forEach(card => {
+          if (filter === 'ALL' || card.dataset.bias === filter) {
+            card.classList.remove('hidden');
+          } else {
+            card.classList.add('hidden');
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
