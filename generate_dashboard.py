@@ -7,11 +7,13 @@ swept level highlighted), a summary/filter bar, and a small animated SVG
 "trader at a desk" scene per card whose monitor glows BUY/SELL/AVOID.
 """
 
+import html
 import json
 from datetime import datetime
 from pathlib import Path
 
 from bias_engine import calculate_bias, bias_reason
+from economic_calendar import load_events_by_pair
 
 ROOT = Path(__file__).parent
 DATA_FILE = ROOT / "data" / "candles.json"
@@ -41,11 +43,19 @@ def load_data():
 
 def build_rows(data):
     rows = []
+    events_by_pair = load_events_by_pair(data["pairs"].keys())
     for pair, candles in data["pairs"].items():
         c1, c2 = candles["candle1"], candles["candle2"]
         bias = calculate_bias(c1, c2)
         reason = bias_reason(c1, c2)
-        rows.append({"pair": pair, "bias": bias, "reason": reason, "c1": c1, "c2": c2})
+        rows.append({
+            "pair": pair,
+            "bias": bias,
+            "reason": reason,
+            "c1": c1,
+            "c2": c2,
+            "events": events_by_pair.get(pair, []),
+        })
     return rows
 
 
@@ -189,12 +199,36 @@ def render_html(data, rows):
         trader = render_trader_scene(r["bias"], i)
         flag = FLAGS.get(r["pair"], "")
         delay = i * 90
+
+        events = r.get("events", [])
+        event_badge = ""
+        if events:
+            highest_high = any(e["impact"] == "High" for e in events)
+            badge_cls = "high" if highest_high else "medium"
+            tooltip_rows = "".join(
+                f'<div class="event-row {e["impact"].lower()}">'
+                f'<span class="event-time">{html.escape(e["time"])}</span>'
+                f'<span class="event-ccy">{html.escape(e["country"])}</span>'
+                f'<span class="event-name">{html.escape(e["title"])}</span>'
+                f'</div>'
+                for e in events
+            )
+            event_badge = (
+                f'<span class="event-badge-wrap">'
+                f'<span class="event-badge {badge_cls}">📅 {len(events)}</span>'
+                f'<div class="event-tooltip">{tooltip_rows}</div>'
+                f'</span>'
+            )
+
         cards += f"""
         <div class="card {cls}" data-bias="{r['bias']}" style="animation-delay:{delay}ms">
           <div class="scan-sweep"></div>
           <div class="card-header">
             <span class="pair">{flag} {r['pair']}</span>
-            <span class="badge {cls}"><span class="badge-dot"></span>{r['bias']}</span>
+            <div class="header-right">
+              {event_badge}
+              <span class="badge {cls}"><span class="badge-dot"></span>{r['bias']}</span>
+            </div>
           </div>
           <div class="reason">{r['reason']}</div>
           <div class="trader-wrap">{trader}</div>
@@ -367,7 +401,38 @@ def render_html(data, rows):
   @keyframes sweep {{ 0% {{ left: -40%; }} 60%, 100% {{ left: 120%; }} }}
 
   .card-header {{ display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }}
+  .header-right {{ display: flex; align-items: center; gap: 8px; }}
   .pair {{ font-size: 16px; font-weight: 600; letter-spacing: 0.3px; }}
+  .event-badge-wrap {{ position: relative; display: inline-flex; }}
+  .event-badge {{
+    font-size: 11px; font-weight: 700; cursor: default;
+    padding: 3px 8px; border-radius: 999px;
+    display: inline-flex; align-items: center; gap: 3px;
+    border: 1px solid currentColor;
+  }}
+  .event-badge.high {{ color: var(--sell); background: rgba(255,92,92,0.1); animation: badge-pulse 1.6s ease-in-out infinite; }}
+  .event-badge.medium {{ color: #f5a623; background: rgba(245,166,35,0.1); }}
+  @keyframes badge-pulse {{ 0%,100% {{ box-shadow: 0 0 0 rgba(255,92,92,0); }} 50% {{ box-shadow: 0 0 8px rgba(255,92,92,0.5); }} }}
+  .event-tooltip {{
+    position: absolute; top: calc(100% + 8px); right: -8px; z-index: 30;
+    background: rgba(12,12,20,0.98); border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 10px; padding: 8px 10px; min-width: 220px;
+    opacity: 0; visibility: hidden; transform: translateY(-4px);
+    transition: opacity .15s ease, transform .15s ease, visibility .15s;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+  }}
+  .event-badge-wrap:hover .event-tooltip {{ opacity: 1; visibility: visible; transform: translateY(0); }}
+  .event-row {{
+    display: flex; gap: 8px; align-items: baseline;
+    font-size: 11px; padding: 3px 0; white-space: nowrap;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }}
+  .event-row:last-child {{ border-bottom: none; }}
+  .event-time {{ color: var(--muted); width: 54px; flex-shrink: 0; }}
+  .event-ccy {{ font-weight: 700; width: 34px; flex-shrink: 0; }}
+  .event-row.high .event-ccy {{ color: var(--sell); }}
+  .event-row.medium .event-ccy {{ color: #f5a623; }}
+  .event-name {{ color: #e8e8f0; overflow: hidden; text-overflow: ellipsis; }}
   .badge {{
     display: inline-flex; align-items: center; gap: 5px;
     font-size: 11px;

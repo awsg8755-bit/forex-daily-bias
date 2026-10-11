@@ -150,7 +150,38 @@
   @keyframes sweep { 0% { left: -40%; } 60%, 100% { left: 120%; } }
 
   .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .header-right { display: flex; align-items: center; gap: 8px; }
   .pair { font-size: 16px; font-weight: 600; letter-spacing: 0.3px; }
+  .event-badge-wrap { position: relative; display: inline-flex; }
+  .event-badge {
+    font-size: 11px; font-weight: 700; cursor: default;
+    padding: 3px 8px; border-radius: 999px;
+    display: inline-flex; align-items: center; gap: 3px;
+    border: 1px solid currentColor;
+  }
+  .event-badge.high { color: var(--sell); background: rgba(255,92,92,0.1); animation: badge-pulse 1.6s ease-in-out infinite; }
+  .event-badge.medium { color: #f5a623; background: rgba(245,166,35,0.1); }
+  @keyframes badge-pulse { 0%,100% { box-shadow: 0 0 0 rgba(255,92,92,0); } 50% { box-shadow: 0 0 8px rgba(255,92,92,0.5); } }
+  .event-tooltip {
+    position: absolute; top: calc(100% + 8px); right: -8px; z-index: 30;
+    background: rgba(12,12,20,0.98); border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 10px; padding: 8px 10px; min-width: 220px;
+    opacity: 0; visibility: hidden; transform: translateY(-4px);
+    transition: opacity .15s ease, transform .15s ease, visibility .15s;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+  }
+  .event-badge-wrap:hover .event-tooltip { opacity: 1; visibility: visible; transform: translateY(0); }
+  .event-row {
+    display: flex; gap: 8px; align-items: baseline;
+    font-size: 11px; padding: 3px 0; white-space: nowrap;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .event-row:last-child { border-bottom: none; }
+  .event-time { color: var(--muted); width: 54px; flex-shrink: 0; }
+  .event-ccy { font-weight: 700; width: 34px; flex-shrink: 0; }
+  .event-row.high .event-ccy { color: var(--sell); }
+  .event-row.medium .event-ccy { color: #f5a623; }
+  .event-name { color: #e8e8f0; overflow: hidden; text-overflow: ellipsis; }
   .badge {
     display: inline-flex; align-items: center; gap: 5px;
     font-size: 11px;
@@ -223,7 +254,7 @@
     <h1>Daily Bias Agent</h1>
     <span class="live-badge"><span class="live-dot"></span>LIVE</span>
   </header>
-  <div class="subtitle">Generated 2026-10-11 14:01 &middot; Source: TradingView (Pepperstone feed), Daily TF, Brisbane 7am candle</div>
+  <div class="subtitle">Generated 2026-10-12 08:24 &middot; Source: TradingView (Pepperstone feed), Daily TF, Brisbane 7am candle</div>
 
   <div class="summary-bar">
     <div class="summary-counts">
@@ -243,7 +274,10 @@
           <div class="scan-sweep"></div>
           <div class="card-header">
             <span class="pair">🥇 XAUUSD</span>
-            <span class="badge buy"><span class="badge-dot"></span>BUY</span>
+            <div class="header-right">
+              
+              <span class="badge buy"><span class="badge-dot"></span>BUY</span>
+            </div>
           </div>
           <div class="reason">Swept prior high and closed above it (confirmed breakout)</div>
           <div class="trader-wrap">
@@ -344,7 +378,10 @@
           <div class="scan-sweep"></div>
           <div class="card-header">
             <span class="pair">🇬🇧🇯🇵 GBPJPY</span>
-            <span class="badge buy"><span class="badge-dot"></span>BUY</span>
+            <div class="header-right">
+              
+              <span class="badge buy"><span class="badge-dot"></span>BUY</span>
+            </div>
           </div>
           <div class="reason">Swept prior high and closed above it (confirmed breakout)</div>
           <div class="trader-wrap">
@@ -445,7 +482,10 @@
           <div class="scan-sweep"></div>
           <div class="card-header">
             <span class="pair">🇬🇧🇺🇸 GBPUSD</span>
-            <span class="badge sell"><span class="badge-dot"></span>SELL</span>
+            <div class="header-right">
+              
+              <span class="badge sell"><span class="badge-dot"></span>SELL</span>
+            </div>
           </div>
           <div class="reason">Swept prior high but closed back below it (failed breakout / reversal)</div>
           <div class="trader-wrap">
@@ -546,7 +586,10 @@
           <div class="scan-sweep"></div>
           <div class="card-header">
             <span class="pair">🇪🇺🇬🇧 EURGBP</span>
-            <span class="badge buy"><span class="badge-dot"></span>BUY</span>
+            <div class="header-right">
+              
+              <span class="badge buy"><span class="badge-dot"></span>BUY</span>
+            </div>
           </div>
           <div class="reason">Swept prior low but closed back above it (failed breakdown / reversal)</div>
           <div class="trader-wrap">
@@ -647,7 +690,10 @@
           <div class="scan-sweep"></div>
           <div class="card-header">
             <span class="pair">🇪🇺🇺🇸 EURUSD</span>
-            <span class="badge sell"><span class="badge-dot"></span>SELL</span>
+            <div class="header-right">
+              
+              <span class="badge sell"><span class="badge-dot"></span>SELL</span>
+            </div>
           </div>
           <div class="reason">Swept prior low and closed below it (confirmed breakdown)</div>
           <div class="trader-wrap">
@@ -748,7 +794,10 @@
           <div class="scan-sweep"></div>
           <div class="card-header">
             <span class="pair">🇦🇺🇯🇵 AUDJPY</span>
-            <span class="badge buy"><span class="badge-dot"></span>BUY</span>
+            <div class="header-right">
+              
+              <span class="badge buy"><span class="badge-dot"></span>BUY</span>
+            </div>
           </div>
           <div class="reason">Swept prior high and closed above it (confirmed breakout)</div>
           <div class="trader-wrap">
@@ -849,7 +898,10 @@
           <div class="scan-sweep"></div>
           <div class="card-header">
             <span class="pair">🇺🇸🇯🇵 USDJPY</span>
-            <span class="badge sell"><span class="badge-dot"></span>SELL</span>
+            <div class="header-right">
+              
+              <span class="badge sell"><span class="badge-dot"></span>SELL</span>
+            </div>
           </div>
           <div class="reason">Swept prior high but closed back below it (failed breakout / reversal)</div>
           <div class="trader-wrap">
