@@ -2,28 +2,85 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Daily Bias Dashboard</title>
+<title>Daily Bias Agent</title>
 <style>
   :root {
-    --bg: #0d1117;
-    --card-bg: #161b22;
-    --border: #30363d;
+    --bg: #05070d;
+    --card-bg: rgba(22, 27, 38, 0.65);
+    --border: #262c3b;
     --text: #e6edf3;
     --muted: #8b949e;
-    --buy: #3fb950;
-    --sell: #f85149;
+    --buy: #3fe074;
+    --sell: #ff5c5c;
     --avoid: #8b949e;
+    --accent: #5b8cff;
   }
   * { box-sizing: border-box; }
+
   body {
     margin: 0;
     padding: 40px;
-    background: var(--bg);
+    min-height: 100vh;
+    background:
+      radial-gradient(circle at 15% 10%, rgba(91,140,255,0.12), transparent 40%),
+      radial-gradient(circle at 85% 0%, rgba(63,224,116,0.08), transparent 35%),
+      linear-gradient(180deg, #05070d 0%, #0a0e18 100%);
+    background-attachment: fixed;
     color: var(--text);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    position: relative;
+    overflow-x: hidden;
   }
-  h1 { font-size: 22px; margin-bottom: 4px; }
-  .subtitle { color: var(--muted); font-size: 13px; margin-bottom: 20px; }
+
+  /* animated grid background */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(91,140,255,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(91,140,255,0.05) 1px, transparent 1px);
+    background-size: 42px 42px;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 40%, transparent 90%);
+    animation: drift 30s linear infinite;
+    pointer-events: none;
+    z-index: 0;
+  }
+  @keyframes drift {
+    from { background-position: 0 0, 0 0; }
+    to { background-position: 42px 42px, 42px 42px; }
+  }
+
+  .content { position: relative; z-index: 1; max-width: 1280px; margin: 0 auto; }
+
+  header { display: flex; align-items: center; gap: 14px; margin-bottom: 4px; }
+  .agent-avatar {
+    width: 40px; height: 40px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent), #8b5bff);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 0 22px rgba(91,140,255,0.5);
+    animation: avatar-pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes avatar-pulse {
+    0%, 100% { box-shadow: 0 0 14px rgba(91,140,255,0.4); }
+    50% { box-shadow: 0 0 28px rgba(91,140,255,0.75); }
+  }
+  h1 { font-size: 24px; margin: 0; letter-spacing: 0.3px; }
+  .live-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11px; font-weight: 700; letter-spacing: 1px;
+    color: var(--buy); background: rgba(63,224,116,0.1);
+    border: 1px solid rgba(63,224,116,0.3);
+    padding: 3px 10px; border-radius: 999px; margin-left: 10px;
+  }
+  .live-dot {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--buy);
+    animation: blink 1.4s ease-in-out infinite;
+  }
+  @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.25; } }
+
+  .subtitle { color: var(--muted); font-size: 13px; margin: 6px 0 24px 54px; }
 
   .summary-bar {
     display: flex;
@@ -31,22 +88,18 @@
     gap: 10px;
     flex-wrap: wrap;
     margin-bottom: 24px;
-    padding: 14px 16px;
+    padding: 14px 18px;
     background: var(--card-bg);
+    backdrop-filter: blur(12px);
     border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: 10px;
   }
-  .summary-counts {
-    display: flex;
-    gap: 16px;
-    font-size: 13px;
-    margin-right: auto;
-  }
+  .summary-counts { display: flex; gap: 18px; font-size: 13px; margin-right: auto; }
   .summary-counts span.count-buy { color: var(--buy); font-weight: 700; }
   .summary-counts span.count-sell { color: var(--sell); font-weight: 700; }
   .summary-counts span.count-avoid { color: var(--avoid); font-weight: 700; }
   .filter-btn {
-    background: #21262d;
+    background: rgba(255,255,255,0.03);
     border: 1px solid var(--border);
     color: var(--text);
     padding: 6px 14px;
@@ -54,69 +107,123 @@
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
+    transition: all 0.15s ease;
   }
-  .filter-btn:hover { background: #30363d; }
-  .filter-btn.active { background: #1f6feb; border-color: #1f6feb; }
+  .filter-btn:hover { background: rgba(255,255,255,0.08); transform: translateY(-1px); }
+  .filter-btn.active { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 14px rgba(91,140,255,0.4); }
 
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 16px;
+    margin-bottom: 28px;
   }
   .card {
+    position: relative;
+    overflow: hidden;
     background: var(--card-bg);
+    backdrop-filter: blur(12px);
     border: 1px solid var(--border);
-    border-left: 4px solid var(--border);
-    border-radius: 8px;
+    border-radius: 12px;
     padding: 16px;
+    opacity: 0;
+    transform: translateY(14px);
+    animation: card-in 0.5s ease forwards;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
-  .card.buy { border-left-color: var(--buy); }
-  .card.sell { border-left-color: var(--sell); }
-  .card.avoid { border-left-color: var(--avoid); }
+  .card:hover { transform: translateY(-3px); }
+  @keyframes card-in { to { opacity: 1; transform: translateY(0); } }
+  .card.buy { box-shadow: inset 3px 0 0 var(--buy), 0 0 0 1px rgba(63,224,116,0.08); }
+  .card.sell { box-shadow: inset 3px 0 0 var(--sell), 0 0 0 1px rgba(255,92,92,0.08); }
+  .card.avoid { box-shadow: inset 3px 0 0 var(--avoid); }
+  .card.buy:hover { box-shadow: inset 3px 0 0 var(--buy), 0 0 24px rgba(63,224,116,0.18); }
+  .card.sell:hover { box-shadow: inset 3px 0 0 var(--sell), 0 0 24px rgba(255,92,92,0.18); }
   .card.hidden { display: none; }
-  .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
+
+  .scan-sweep {
+    position: absolute; top: 0; left: -40%;
+    width: 40%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+    animation: sweep 5s ease-in-out infinite;
+    pointer-events: none;
   }
-  .pair { font-size: 17px; font-weight: 600; letter-spacing: 0.5px; }
+  @keyframes sweep { 0% { left: -40%; } 60%, 100% { left: 120%; } }
+
+  .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .pair { font-size: 16px; font-weight: 600; letter-spacing: 0.3px; }
   .badge {
-    font-size: 12px;
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 11px;
     font-weight: 700;
     padding: 4px 10px;
     border-radius: 999px;
     letter-spacing: 0.5px;
   }
-  .badge.buy { background: rgba(63,185,80,0.15); color: var(--buy); }
-  .badge.sell { background: rgba(248,81,73,0.15); color: var(--sell); }
-  .badge.avoid { background: rgba(139,148,158,0.15); color: var(--avoid); }
-  .reason { color: var(--muted); font-size: 13px; margin-bottom: 10px; min-height: 34px; }
+  .badge-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+  .badge.buy { background: rgba(63,224,116,0.12); color: var(--buy); }
+  .badge.sell { background: rgba(255,92,92,0.12); color: var(--sell); }
+  .badge.avoid { background: rgba(139,148,158,0.12); color: var(--avoid); }
+  .reason { color: var(--muted); font-size: 12.5px; margin-bottom: 10px; min-height: 34px; line-height: 1.4; }
+
   .mini-chart {
-    width: 100%;
-    height: auto;
-    background: #0d1117;
+    width: 100%; height: auto;
+    background: rgba(5,7,13,0.6);
     border: 1px solid var(--border);
-    border-radius: 6px;
+    border-radius: 8px;
     margin-bottom: 12px;
   }
+  .draw-in { opacity: 0; animation: fade-in 0.4s ease forwards; }
+  @keyframes fade-in { to { opacity: 1; } }
+  .pulse-dot { opacity: 0; animation: dot-in 0.3s ease forwards, dot-pulse 2s ease-in-out infinite 0.6s; }
+  @keyframes dot-in { to { opacity: 1; } }
+  @keyframes dot-pulse { 0%,100% { r: 4; opacity: 1; } 50% { r: 6; opacity: 0.5; } }
+
   .candles {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    font-size: 12px;
-    color: var(--muted);
+    display: flex; flex-direction: column; gap: 6px;
+    font-size: 11.5px; color: var(--muted);
     border-top: 1px solid var(--border);
     padding-top: 10px;
   }
   .candle { display: flex; gap: 10px; }
   .candle .label { min-width: 90px; color: var(--text); font-weight: 500; }
-  footer { margin-top: 32px; color: var(--muted); font-size: 12px; }
+
+  /* trader-at-desk scene */
+  .trader-wrap {
+    background: rgba(5,7,13,0.5);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 8px 6px 4px;
+    margin-bottom: 12px;
+  }
+  .trader-scene {
+    display: block;
+    width: 60%;
+    margin: 0 auto;
+    opacity: 0;
+    animation: card-in 0.5s ease forwards;
+  }
+  .person { animation: idle-bob 2.6s ease-in-out infinite; transform-origin: center; }
+  @keyframes idle-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-1.5px); } }
+  .hand { animation: type-hand 0.5s ease-in-out infinite; transform-origin: left center; }
+  @keyframes type-hand { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(1.5px); } }
+  .screen {
+    filter: drop-shadow(0 0 5px var(--glow)) drop-shadow(0 0 10px var(--glow));
+    animation: screen-flicker 2.8s ease-in-out infinite;
+  }
+  @keyframes screen-flicker { 0%, 100% { opacity: 1; } 50% { opacity: 0.82; } }
+
+  footer { margin-top: 24px; color: var(--muted); font-size: 11.5px; text-align: center; }
 </style>
 </head>
 <body>
-  <h1>Daily Bias Dashboard</h1>
-  <div class="subtitle">Generated 2026-10-11 12:11 &middot; Source: TradingView (Pepperstone feed), Daily TF, Brisbane 7am candle</div>
+<div class="content">
+
+  <header>
+    <div class="agent-avatar">🤖</div>
+    <h1>Daily Bias Agent</h1>
+    <span class="live-badge"><span class="live-dot"></span>LIVE</span>
+  </header>
+  <div class="subtitle">Generated 2026-10-11 14:01 &middot; Source: TradingView (Pepperstone feed), Daily TF, Brisbane 7am candle</div>
 
   <div class="summary-bar">
     <div class="summary-counts">
@@ -132,27 +239,88 @@
 
   <div class="grid" id="grid">
     
-        <div class="card buy" data-bias="BUY">
+        <div class="card buy" data-bias="BUY" style="animation-delay:0ms">
+          <div class="scan-sweep"></div>
           <div class="card-header">
-            <span class="pair">XAUUSD</span>
-            <span class="badge buy">BUY</span>
+            <span class="pair">🥇 XAUUSD</span>
+            <span class="badge buy"><span class="badge-dot"></span>BUY</span>
           </div>
           <div class="reason">Swept prior high and closed above it (confirmed breakout)</div>
+          <div class="trader-wrap">
+    <svg width="100%" height="auto" viewBox="0 0 220 170" class="trader-scene" style="animation-delay:0ms">
+      <!-- desk, viewed from directly above -->
+      <rect x="8" y="8" width="204" height="154" rx="12" fill="#1b2130" stroke="#2a3142" stroke-width="2"/>
+
+      <!-- coffee mug -->
+      <circle cx="30" cy="30" r="11" fill="#2a3142"/>
+      <circle cx="30" cy="30" r="7" fill="#171c28"/>
+      <rect x="39" y="27" width="7" height="6" rx="3" fill="#2a3142"/>
+
+      <!-- small plant -->
+      <circle cx="192" cy="28" r="12" fill="#232a3a"/>
+      <circle cx="187" cy="22" r="6" fill="#3fa15f"/>
+      <circle cx="196" cy="20" r="6" fill="#2f8a4e"/>
+      <circle cx="197" cy="30" r="6" fill="#3fa15f"/>
+
+      <!-- monitor -->
+      <rect x="70" y="18" width="80" height="56" rx="7" fill="#11151f" stroke="#2a3142" stroke-width="3"/>
+      <rect x="78" y="27" width="64" height="40" rx="3" fill="#0a0d14" stroke="#3fe074" stroke-width="2"
+            class="screen" style="--glow:#3fe074"/>
+      <polygon points="110,34 85,60 135,60" fill="#3fe074"/>
+      <rect x="102" y="76" width="16" height="7" rx="2" fill="#2a3142"/>
+
+      <!-- keyboard -->
+      <rect x="76" y="92" width="68" height="22" rx="4" fill="#232a3a" stroke="#2a3142" stroke-width="1.5"/>
+      <rect x="82" y="97" width="56" height="3" rx="1.5" fill="#333c50"/>
+      <rect x="82" y="103" width="56" height="3" rx="1.5" fill="#333c50"/>
+
+      <!-- mouse pad + mouse -->
+      <rect x="150" y="88" width="30" height="40" rx="7" fill="#1b2130" stroke="#2a3142" stroke-width="1.5"/>
+      <ellipse cx="165" cy="104" rx="8" ry="13" fill="#2a3142" stroke="#333c50" stroke-width="1.5"/>
+
+      <!-- chair back, seen from above as a ring behind the person -->
+      <ellipse cx="110" cy="138" rx="42" ry="36" fill="#171c28"/>
+
+      <g class="person">
+        <!-- shoulders / torso -->
+        <ellipse cx="110" cy="132" rx="32" ry="26" fill="#8b96a8"/>
+
+        <!-- arms reaching forward to the keyboard -->
+        <path d="M86,120 Q74,104 84,96" stroke="#8b96a8" stroke-width="12" fill="none"
+              stroke-linecap="round" class="hand"/>
+        <path d="M134,120 Q146,104 136,96" stroke="#8b96a8" stroke-width="12" fill="none"
+              stroke-linecap="round" class="hand" style="animation-delay:0.25s"/>
+        <circle cx="84" cy="96" r="7" fill="#cdd5e0" class="hand"/>
+        <circle cx="136" cy="96" r="7" fill="#cdd5e0" class="hand" style="animation-delay:0.25s"/>
+
+        <!-- head + headphones -->
+        <path d="M91,113 a19,12 0 0,1 38,0" fill="none" stroke="#2a3142" stroke-width="4"/>
+        <circle cx="91" cy="115" r="6" fill="#2a3142"/>
+        <circle cx="129" cy="115" r="6" fill="#2a3142"/>
+        <circle cx="110" cy="112" r="19" fill="#cdd5e0"/>
+        <path d="M94,102 a16,13 0 0,1 32,0" fill="none" stroke="#b7c0cf" stroke-width="3"/>
+      </g>
+    </svg>
+    </div>
           
     <svg width="220" height="130" viewBox="0 0 220 130" class="mini-chart">
       
-      <line x1="4" y1="72.6" x2="216" y2="72.6" stroke="#8b949e" stroke-width="1" stroke-dasharray="3,3"/>
-      <line x1="4" y1="107.5" x2="216" y2="107.5" stroke="#8b949e" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="4" y1="72.6" x2="216" y2="72.6" stroke="#4a5568" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="4" y1="107.5" x2="216" y2="107.5" stroke="#4a5568" stroke-width="1" stroke-dasharray="3,3"/>
     
       
-          <line x1="66.0" y1="72.6" x2="66.0" y2="107.5" stroke="#3fb950" stroke-width="2" opacity="0.55"/>
-          <rect x="53.0" y="82.8" width="26" height="15.200000000000003" fill="#3fb950" opacity="0.55"/>
+          <g class="draw-in candle-glow-buy" style="animation-delay:0ms">
+            <line x1="66.0" y1="72.6" x2="66.0" y2="107.5" stroke="#3fe074" stroke-width="2" opacity="0.5"/>
+            <rect x="53.0" y="82.8" width="26" height="15.200000000000003" rx="2" fill="#3fe074" opacity="0.5"/>
+          </g>
         
       
-          <line x1="158.4" y1="22.5" x2="158.4" y2="84.9" stroke="#3fb950" stroke-width="2" opacity="1"/>
-          <rect x="145.4" y="33.4" width="26" height="48.1" fill="#3fb950" opacity="1"/>
+          <g class="draw-in candle-glow-buy" style="animation-delay:150ms">
+            <line x1="158.4" y1="22.5" x2="158.4" y2="84.9" stroke="#3fe074" stroke-width="2" opacity="1"/>
+            <rect x="145.4" y="33.4" width="26" height="48.1" rx="2" fill="#3fe074" opacity="1"/>
+          </g>
         
-      <circle cx="158.4" cy="33.4" r="3" fill="#3fb950"/>
+      <circle cx="158.4" cy="33.4" r="4" fill="#3fe074" class="pulse-dot" style="animation-delay:300ms"/>
       <text x="66.0" y="128" font-size="9" fill="#8b949e" text-anchor="middle">C1</text>
       <text x="158.4" y="128" font-size="9" fill="#e6edf3" text-anchor="middle">C2</text>
     </svg>
@@ -172,27 +340,88 @@
           </div>
         </div>
         
-        <div class="card buy" data-bias="BUY">
+        <div class="card buy" data-bias="BUY" style="animation-delay:90ms">
+          <div class="scan-sweep"></div>
           <div class="card-header">
-            <span class="pair">GBPJPY</span>
-            <span class="badge buy">BUY</span>
+            <span class="pair">🇬🇧🇯🇵 GBPJPY</span>
+            <span class="badge buy"><span class="badge-dot"></span>BUY</span>
           </div>
           <div class="reason">Swept prior high and closed above it (confirmed breakout)</div>
+          <div class="trader-wrap">
+    <svg width="100%" height="auto" viewBox="0 0 220 170" class="trader-scene" style="animation-delay:90ms">
+      <!-- desk, viewed from directly above -->
+      <rect x="8" y="8" width="204" height="154" rx="12" fill="#1b2130" stroke="#2a3142" stroke-width="2"/>
+
+      <!-- coffee mug -->
+      <circle cx="30" cy="30" r="11" fill="#2a3142"/>
+      <circle cx="30" cy="30" r="7" fill="#171c28"/>
+      <rect x="39" y="27" width="7" height="6" rx="3" fill="#2a3142"/>
+
+      <!-- small plant -->
+      <circle cx="192" cy="28" r="12" fill="#232a3a"/>
+      <circle cx="187" cy="22" r="6" fill="#3fa15f"/>
+      <circle cx="196" cy="20" r="6" fill="#2f8a4e"/>
+      <circle cx="197" cy="30" r="6" fill="#3fa15f"/>
+
+      <!-- monitor -->
+      <rect x="70" y="18" width="80" height="56" rx="7" fill="#11151f" stroke="#2a3142" stroke-width="3"/>
+      <rect x="78" y="27" width="64" height="40" rx="3" fill="#0a0d14" stroke="#3fe074" stroke-width="2"
+            class="screen" style="--glow:#3fe074"/>
+      <polygon points="110,34 85,60 135,60" fill="#3fe074"/>
+      <rect x="102" y="76" width="16" height="7" rx="2" fill="#2a3142"/>
+
+      <!-- keyboard -->
+      <rect x="76" y="92" width="68" height="22" rx="4" fill="#232a3a" stroke="#2a3142" stroke-width="1.5"/>
+      <rect x="82" y="97" width="56" height="3" rx="1.5" fill="#333c50"/>
+      <rect x="82" y="103" width="56" height="3" rx="1.5" fill="#333c50"/>
+
+      <!-- mouse pad + mouse -->
+      <rect x="150" y="88" width="30" height="40" rx="7" fill="#1b2130" stroke="#2a3142" stroke-width="1.5"/>
+      <ellipse cx="165" cy="104" rx="8" ry="13" fill="#2a3142" stroke="#333c50" stroke-width="1.5"/>
+
+      <!-- chair back, seen from above as a ring behind the person -->
+      <ellipse cx="110" cy="138" rx="42" ry="36" fill="#171c28"/>
+
+      <g class="person">
+        <!-- shoulders / torso -->
+        <ellipse cx="110" cy="132" rx="32" ry="26" fill="#8b96a8"/>
+
+        <!-- arms reaching forward to the keyboard -->
+        <path d="M86,120 Q74,104 84,96" stroke="#8b96a8" stroke-width="12" fill="none"
+              stroke-linecap="round" class="hand"/>
+        <path d="M134,120 Q146,104 136,96" stroke="#8b96a8" stroke-width="12" fill="none"
+              stroke-linecap="round" class="hand" style="animation-delay:0.25s"/>
+        <circle cx="84" cy="96" r="7" fill="#cdd5e0" class="hand"/>
+        <circle cx="136" cy="96" r="7" fill="#cdd5e0" class="hand" style="animation-delay:0.25s"/>
+
+        <!-- head + headphones -->
+        <path d="M91,113 a19,12 0 0,1 38,0" fill="none" stroke="#2a3142" stroke-width="4"/>
+        <circle cx="91" cy="115" r="6" fill="#2a3142"/>
+        <circle cx="129" cy="115" r="6" fill="#2a3142"/>
+        <circle cx="110" cy="112" r="19" fill="#cdd5e0"/>
+        <path d="M94,102 a16,13 0 0,1 32,0" fill="none" stroke="#b7c0cf" stroke-width="3"/>
+      </g>
+    </svg>
+    </div>
           
     <svg width="220" height="130" viewBox="0 0 220 130" class="mini-chart">
       
-      <line x1="4" y1="41.6" x2="216" y2="41.6" stroke="#8b949e" stroke-width="1" stroke-dasharray="3,3"/>
-      <line x1="4" y1="107.5" x2="216" y2="107.5" stroke="#8b949e" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="4" y1="41.6" x2="216" y2="41.6" stroke="#4a5568" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="4" y1="107.5" x2="216" y2="107.5" stroke="#4a5568" stroke-width="1" stroke-dasharray="3,3"/>
     
       
-          <line x1="66.0" y1="41.6" x2="66.0" y2="107.5" stroke="#3fb950" stroke-width="2" opacity="0.55"/>
-          <rect x="53.0" y="69.6" width="26" height="7.900000000000006" fill="#3fb950" opacity="0.55"/>
+          <g class="draw-in candle-glow-buy" style="animation-delay:90ms">
+            <line x1="66.0" y1="41.6" x2="66.0" y2="107.5" stroke="#3fe074" stroke-width="2" opacity="0.5"/>
+            <rect x="53.0" y="69.6" width="26" height="7.900000000000006" rx="2" fill="#3fe074" opacity="0.5"/>
+          </g>
         
       
-          <line x1="158.4" y1="22.5" x2="158.4" y2="85.5" stroke="#3fb950" stroke-width="2" opacity="1"/>
-          <rect x="145.4" y="35.0" width="26" height="45.099999999999994" fill="#3fb950" opacity="1"/>
+          <g class="draw-in candle-glow-buy" style="animation-delay:240ms">
+            <line x1="158.4" y1="22.5" x2="158.4" y2="85.5" stroke="#3fe074" stroke-width="2" opacity="1"/>
+            <rect x="145.4" y="35.0" width="26" height="45.099999999999994" rx="2" fill="#3fe074" opacity="1"/>
+          </g>
         
-      <circle cx="158.4" cy="35.0" r="3" fill="#3fb950"/>
+      <circle cx="158.4" cy="35.0" r="4" fill="#3fe074" class="pulse-dot" style="animation-delay:390ms"/>
       <text x="66.0" y="128" font-size="9" fill="#8b949e" text-anchor="middle">C1</text>
       <text x="158.4" y="128" font-size="9" fill="#e6edf3" text-anchor="middle">C2</text>
     </svg>
@@ -212,27 +441,88 @@
           </div>
         </div>
         
-        <div class="card sell" data-bias="SELL">
+        <div class="card sell" data-bias="SELL" style="animation-delay:180ms">
+          <div class="scan-sweep"></div>
           <div class="card-header">
-            <span class="pair">GBPUSD</span>
-            <span class="badge sell">SELL</span>
+            <span class="pair">🇬🇧🇺🇸 GBPUSD</span>
+            <span class="badge sell"><span class="badge-dot"></span>SELL</span>
           </div>
           <div class="reason">Swept prior high but closed back below it (failed breakout / reversal)</div>
+          <div class="trader-wrap">
+    <svg width="100%" height="auto" viewBox="0 0 220 170" class="trader-scene" style="animation-delay:180ms">
+      <!-- desk, viewed from directly above -->
+      <rect x="8" y="8" width="204" height="154" rx="12" fill="#1b2130" stroke="#2a3142" stroke-width="2"/>
+
+      <!-- coffee mug -->
+      <circle cx="30" cy="30" r="11" fill="#2a3142"/>
+      <circle cx="30" cy="30" r="7" fill="#171c28"/>
+      <rect x="39" y="27" width="7" height="6" rx="3" fill="#2a3142"/>
+
+      <!-- small plant -->
+      <circle cx="192" cy="28" r="12" fill="#232a3a"/>
+      <circle cx="187" cy="22" r="6" fill="#3fa15f"/>
+      <circle cx="196" cy="20" r="6" fill="#2f8a4e"/>
+      <circle cx="197" cy="30" r="6" fill="#3fa15f"/>
+
+      <!-- monitor -->
+      <rect x="70" y="18" width="80" height="56" rx="7" fill="#11151f" stroke="#2a3142" stroke-width="3"/>
+      <rect x="78" y="27" width="64" height="40" rx="3" fill="#0a0d14" stroke="#ff5c5c" stroke-width="2"
+            class="screen" style="--glow:#ff5c5c"/>
+      <polygon points="110,60 85,34 135,34" fill="#ff5c5c"/>
+      <rect x="102" y="76" width="16" height="7" rx="2" fill="#2a3142"/>
+
+      <!-- keyboard -->
+      <rect x="76" y="92" width="68" height="22" rx="4" fill="#232a3a" stroke="#2a3142" stroke-width="1.5"/>
+      <rect x="82" y="97" width="56" height="3" rx="1.5" fill="#333c50"/>
+      <rect x="82" y="103" width="56" height="3" rx="1.5" fill="#333c50"/>
+
+      <!-- mouse pad + mouse -->
+      <rect x="150" y="88" width="30" height="40" rx="7" fill="#1b2130" stroke="#2a3142" stroke-width="1.5"/>
+      <ellipse cx="165" cy="104" rx="8" ry="13" fill="#2a3142" stroke="#333c50" stroke-width="1.5"/>
+
+      <!-- chair back, seen from above as a ring behind the person -->
+      <ellipse cx="110" cy="138" rx="42" ry="36" fill="#171c28"/>
+
+      <g class="person">
+        <!-- shoulders / torso -->
+        <ellipse cx="110" cy="132" rx="32" ry="26" fill="#8b96a8"/>
+
+        <!-- arms reaching forward to the keyboard -->
+        <path d="M86,120 Q74,104 84,96" stroke="#8b96a8" stroke-width="12" fill="none"
+              stroke-linecap="round" class="hand"/>
+        <path d="M134,120 Q146,104 136,96" stroke="#8b96a8" stroke-width="12" fill="none"
+              stroke-linecap="round" class="hand" style="animation-delay:0.25s"/>
+        <circle cx="84" cy="96" r="7" fill="#cdd5e0" class="hand"/>
+        <circle cx="136" cy="96" r="7" fill="#cdd5e0" class="hand" style="animation-delay:0.25s"/>
+
+        <!-- head + headphones -->
+        <path d="M91,113 a19,12 0 0,1 38,0" fill="none" stroke="#2a3142" stroke-width="4"/>
+        <circle cx="91" cy="115" r="6" fill="#2a3142"/>
+        <circle cx="129" cy="115" r="6" fill="#2a3142"/>
+        <circle cx="110" cy="112" r="19" fill="#cdd5e0"/>
+        <path d="M94,102 a16,13 0 0,1 32,0" fill="none" stroke="#b7c0cf" stroke-width="3"/>
+      </g>
+    </svg>
+    </div>
           
     <svg width="220" height="130" viewBox="0 0 220 130" class="mini-chart">
       
-      <line x1="4" y1="24.7" x2="216" y2="24.7" stroke="#8b949e" stroke-width="1" stroke-dasharray="3,3"/>
-      <line x1="4" y1="107.5" x2="216" y2="107.5" stroke="#8b949e" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="4" y1="24.7" x2="216" y2="24.7" stroke="#4a5568" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="4" y1="107.5" x2="216" y2="107.5" stroke="#4a5568" stroke-width="1" stroke-dasharray="3,3"/>
     
       
-          <line x1="66.0" y1="24.7" x2="66.0" y2="107.5" stroke="#3fb950" stroke-width="2" opacity="0.55"/>
-          <rect x="53.0" y="49.5" width="26" height="26.200000000000003" fill="#3fb950" opacity="0.55"/>
+          <g class="draw-in candle-glow-buy" style="animation-delay:180ms">
+            <line x1="66.0" y1="24.7" x2="66.0" y2="107.5" stroke="#3fe074" stroke-width="2" opacity="0.5"/>
+            <rect x="53.0" y="49.5" width="26" height="26.200000000000003" rx="2" fill="#3fe074" opacity="0.5"/>
+          </g>
         
       
-          <line x1="158.4" y1="22.5" x2="158.4" y2="79.6" stroke="#3fb950" stroke-width="2" opacity="1"/>
-          <rect x="145.4" y="40.6" width="26" height="23.4" fill="#3fb950" opacity="1"/>
+          <g class="draw-in candle-glow-buy" style="animation-delay:330ms">
+            <line x1="158.4" y1="22.5" x2="158.4" y2="79.6" stroke="#3fe074" stroke-width="2" opacity="1"/>
+            <rect x="145.4" y="40.6" width="26" height="23.4" rx="2" fill="#3fe074" opacity="1"/>
+          </g>
         
-      <circle cx="158.4" cy="40.6" r="3" fill="#f85149"/>
+      <circle cx="158.4" cy="40.6" r="4" fill="#ff5c5c" class="pulse-dot" style="animation-delay:480ms"/>
       <text x="66.0" y="128" font-size="9" fill="#8b949e" text-anchor="middle">C1</text>
       <text x="158.4" y="128" font-size="9" fill="#e6edf3" text-anchor="middle">C2</text>
     </svg>
@@ -252,27 +542,88 @@
           </div>
         </div>
         
-        <div class="card buy" data-bias="BUY">
+        <div class="card buy" data-bias="BUY" style="animation-delay:270ms">
+          <div class="scan-sweep"></div>
           <div class="card-header">
-            <span class="pair">EURGBP</span>
-            <span class="badge buy">BUY</span>
+            <span class="pair">🇪🇺🇬🇧 EURGBP</span>
+            <span class="badge buy"><span class="badge-dot"></span>BUY</span>
           </div>
           <div class="reason">Swept prior low but closed back above it (failed breakdown / reversal)</div>
+          <div class="trader-wrap">
+    <svg width="100%" height="auto" viewBox="0 0 220 170" class="trader-scene" style="animation-delay:270ms">
+      <!-- desk, viewed from directly above -->
+      <rect x="8" y="8" width="204" height="154" rx="12" fill="#1b2130" stroke="#2a3142" stroke-width="2"/>
+
+      <!-- coffee mug -->
+      <circle cx="30" cy="30" r="11" fill="#2a3142"/>
+      <circle cx="30" cy="30" r="7" fill="#171c28"/>
+      <rect x="39" y="27" width="7" height="6" rx="3" fill="#2a3142"/>
+
+      <!-- small plant -->
+      <circle cx="192" cy="28" r="12" fill="#232a3a"/>
+      <circle cx="187" cy="22" r="6" fill="#3fa15f"/>
+      <circle cx="196" cy="20" r="6" fill="#2f8a4e"/>
+      <circle cx="197" cy="30" r="6" fill="#3fa15f"/>
+
+      <!-- monitor -->
+      <rect x="70" y="18" width="80" height="56" rx="7" fill="#11151f" stroke="#2a3142" stroke-width="3"/>
+      <rect x="78" y="27" width="64" height="40" rx="3" fill="#0a0d14" stroke="#3fe074" stroke-width="2"
+            class="screen" style="--glow:#3fe074"/>
+      <polygon points="110,34 85,60 135,60" fill="#3fe074"/>
+      <rect x="102" y="76" width="16" height="7" rx="2" fill="#2a3142"/>
+
+      <!-- keyboard -->
+      <rect x="76" y="92" width="68" height="22" rx="4" fill="#232a3a" stroke="#2a3142" stroke-width="1.5"/>
+      <rect x="82" y="97" width="56" height="3" rx="1.5" fill="#333c50"/>
+      <rect x="82" y="103" width="56" height="3" rx="1.5" fill="#333c50"/>
+
+      <!-- mouse pad + mouse -->
+      <rect x="150" y="88" width="30" height="40" rx="7" fill="#1b2130" stroke="#2a3142" stroke-width="1.5"/>
+      <ellipse cx="165" cy="104" rx="8" ry="13" fill="#2a3142" stroke="#333c50" stroke-width="1.5"/>
+
+      <!-- chair back, seen from above as a ring behind the person -->
+      <ellipse cx="110" cy="138" rx="42" ry="36" fill="#171c28"/>
+
+      <g class="person">
+        <!-- shoulders / torso -->
+        <ellipse cx="110" cy="132" rx="32" ry="26" fill="#8b96a8"/>
+
+        <!-- arms reaching forward to the keyboard -->
+        <path d="M86,120 Q74,104 84,96" stroke="#8b96a8" stroke-width="12" fill="none"
+              stroke-linecap="round" class="hand"/>
+        <path d="M134,120 Q146,104 136,96" stroke="#8b96a8" stroke-width="12" fill="none"
+              stroke-linecap="round" class="hand" style="animation-delay:0.25s"/>
+        <circle cx="84" cy="96" r="7" fill="#cdd5e0" class="hand"/>
+        <circle cx="136" cy="96" r="7" fill="#cdd5e0" class="hand" style="animation-delay:0.25s"/>
+
+        <!-- head + headphones -->
+        <path d="M91,113 a19,12 0 0,1 38,0" fill="none" stroke="#2a3142" stroke-width="4"/>
+        <circle cx="91" cy="115" r="6" fill="#2a3142"/>
+        <circle cx="129" cy="115" r="6" fill="#2a3142"/>
+        <circle cx="110" cy="112" r="19" fill="#cdd5e0"/>
+        <path d="M94,102 a16,13 0 0,1 32,0" fill="none" stroke="#b7c0cf" stroke-width="3"/>
+      </g>
+    </svg>
+    </div>
           
     <svg width="220" height="130" viewBox="0 0 220 130" class="mini-chart">
       
-      <line x1="4" y1="22.5" x2="216" y2="22.5" stroke="#8b949e" stroke-width="1" stroke-dasharray="3,3"/>
-      <line x1="4" y1="105.7" x2="216" y2="105.7" stroke="#8b949e" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="4" y1="22.5" x2="216" y2="22.5" stroke="#4a5568" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="4" y1="105.7" x2="216" y2="105.7" stroke="#4a5568" stroke-width="1" stroke-dasharray="3,3"/>
     
       
-          <line x1="66.0" y1="22.5" x2="66.0" y2="105.7" stroke="#3fb950" stroke-width="2" opacity="0.55"/>
-          <rect x="53.0" y="60.6" width="26" height="45.1" fill="#3fb950" opacity="0.55"/>
+          <g class="draw-in candle-glow-buy" style="animation-delay:270ms">
+            <line x1="66.0" y1="22.5" x2="66.0" y2="105.7" stroke="#3fe074" stroke-width="2" opacity="0.5"/>
+            <rect x="53.0" y="60.6" width="26" height="45.1" rx="2" fill="#3fe074" opacity="0.5"/>
+          </g>
         
       
-          <line x1="158.4" y1="28.1" x2="158.4" y2="107.5" stroke="#f85149" stroke-width="2" opacity="1"/>
-          <rect x="145.4" y="84.8" width="26" height="7.6000000000000085" fill="#f85149" opacity="1"/>
+          <g class="draw-in candle-glow-sell" style="animation-delay:420ms">
+            <line x1="158.4" y1="28.1" x2="158.4" y2="107.5" stroke="#ff5c5c" stroke-width="2" opacity="1"/>
+            <rect x="145.4" y="84.8" width="26" height="7.6000000000000085" rx="2" fill="#ff5c5c" opacity="1"/>
+          </g>
         
-      <circle cx="158.4" cy="92.4" r="3" fill="#3fb950"/>
+      <circle cx="158.4" cy="92.4" r="4" fill="#3fe074" class="pulse-dot" style="animation-delay:570ms"/>
       <text x="66.0" y="128" font-size="9" fill="#8b949e" text-anchor="middle">C1</text>
       <text x="158.4" y="128" font-size="9" fill="#e6edf3" text-anchor="middle">C2</text>
     </svg>
@@ -292,27 +643,88 @@
           </div>
         </div>
         
-        <div class="card sell" data-bias="SELL">
+        <div class="card sell" data-bias="SELL" style="animation-delay:360ms">
+          <div class="scan-sweep"></div>
           <div class="card-header">
-            <span class="pair">EURUSD</span>
-            <span class="badge sell">SELL</span>
+            <span class="pair">🇪🇺🇺🇸 EURUSD</span>
+            <span class="badge sell"><span class="badge-dot"></span>SELL</span>
           </div>
           <div class="reason">Swept prior low and closed below it (confirmed breakdown)</div>
+          <div class="trader-wrap">
+    <svg width="100%" height="auto" viewBox="0 0 220 170" class="trader-scene" style="animation-delay:360ms">
+      <!-- desk, viewed from directly above -->
+      <rect x="8" y="8" width="204" height="154" rx="12" fill="#1b2130" stroke="#2a3142" stroke-width="2"/>
+
+      <!-- coffee mug -->
+      <circle cx="30" cy="30" r="11" fill="#2a3142"/>
+      <circle cx="30" cy="30" r="7" fill="#171c28"/>
+      <rect x="39" y="27" width="7" height="6" rx="3" fill="#2a3142"/>
+
+      <!-- small plant -->
+      <circle cx="192" cy="28" r="12" fill="#232a3a"/>
+      <circle cx="187" cy="22" r="6" fill="#3fa15f"/>
+      <circle cx="196" cy="20" r="6" fill="#2f8a4e"/>
+      <circle cx="197" cy="30" r="6" fill="#3fa15f"/>
+
+      <!-- monitor -->
+      <rect x="70" y="18" width="80" height="56" rx="7" fill="#11151f" stroke="#2a3142" stroke-width="3"/>
+      <rect x="78" y="27" width="64" height="40" rx="3" fill="#0a0d14" stroke="#ff5c5c" stroke-width="2"
+            class="screen" style="--glow:#ff5c5c"/>
+      <polygon points="110,60 85,34 135,34" fill="#ff5c5c"/>
+      <rect x="102" y="76" width="16" height="7" rx="2" fill="#2a3142"/>
+
+      <!-- keyboard -->
+      <rect x="76" y="92" width="68" height="22" rx="4" fill="#232a3a" stroke="#2a3142" stroke-width="1.5"/>
+      <rect x="82" y="97" width="56" height="3" rx="1.5" fill="#333c50"/>
+      <rect x="82" y="103" width="56" height="3" rx="1.5" fill="#333c50"/>
+
+      <!-- mouse pad + mouse -->
+      <rect x="150" y="88" width="30" height="40" rx="7" fill="#1b2130" stroke="#2a3142" stroke-width="1.5"/>
+      <ellipse cx="165" cy="104" rx="8" ry="13" fill="#2a3142" stroke="#333c50" stroke-width="1.5"/>
+
+      <!-- chair back, seen from above as a ring behind the person -->
+      <ellipse cx="110" cy="138" rx="42" ry="36" fill="#171c28"/>
+
+      <g class="person">
+        <!-- shoulders / torso -->
+        <ellipse cx="110" cy="132" rx="32" ry="26" fill="#8b96a8"/>
+
+        <!-- arms reaching forward to the keyboard -->
+        <path d="M86,120 Q74,104 84,96" stroke="#8b96a8" stroke-width="12" fill="none"
+              stroke-linecap="round" class="hand"/>
+        <path d="M134,120 Q146,104 136,96" stroke="#8b96a8" stroke-width="12" fill="none"
+              stroke-linecap="round" class="hand" style="animation-delay:0.25s"/>
+        <circle cx="84" cy="96" r="7" fill="#cdd5e0" class="hand"/>
+        <circle cx="136" cy="96" r="7" fill="#cdd5e0" class="hand" style="animation-delay:0.25s"/>
+
+        <!-- head + headphones -->
+        <path d="M91,113 a19,12 0 0,1 38,0" fill="none" stroke="#2a3142" stroke-width="4"/>
+        <circle cx="91" cy="115" r="6" fill="#2a3142"/>
+        <circle cx="129" cy="115" r="6" fill="#2a3142"/>
+        <circle cx="110" cy="112" r="19" fill="#cdd5e0"/>
+        <path d="M94,102 a16,13 0 0,1 32,0" fill="none" stroke="#b7c0cf" stroke-width="3"/>
+      </g>
+    </svg>
+    </div>
           
     <svg width="220" height="130" viewBox="0 0 220 130" class="mini-chart">
       
-      <line x1="4" y1="22.5" x2="216" y2="22.5" stroke="#8b949e" stroke-width="1" stroke-dasharray="3,3"/>
-      <line x1="4" y1="93.0" x2="216" y2="93.0" stroke="#8b949e" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="4" y1="22.5" x2="216" y2="22.5" stroke="#4a5568" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="4" y1="93.0" x2="216" y2="93.0" stroke="#4a5568" stroke-width="1" stroke-dasharray="3,3"/>
     
       
-          <line x1="66.0" y1="22.5" x2="66.0" y2="93.0" stroke="#3fb950" stroke-width="2" opacity="0.55"/>
-          <rect x="53.0" y="38.5" width="26" height="37.2" fill="#3fb950" opacity="0.55"/>
+          <g class="draw-in candle-glow-buy" style="animation-delay:360ms">
+            <line x1="66.0" y1="22.5" x2="66.0" y2="93.0" stroke="#3fe074" stroke-width="2" opacity="0.5"/>
+            <rect x="53.0" y="38.5" width="26" height="37.2" rx="2" fill="#3fe074" opacity="0.5"/>
+          </g>
         
       
-          <line x1="158.4" y1="54.9" x2="158.4" y2="107.5" stroke="#f85149" stroke-width="2" opacity="1"/>
-          <rect x="145.4" y="82.0" width="26" height="12.299999999999997" fill="#f85149" opacity="1"/>
+          <g class="draw-in candle-glow-sell" style="animation-delay:510ms">
+            <line x1="158.4" y1="54.9" x2="158.4" y2="107.5" stroke="#ff5c5c" stroke-width="2" opacity="1"/>
+            <rect x="145.4" y="82.0" width="26" height="12.299999999999997" rx="2" fill="#ff5c5c" opacity="1"/>
+          </g>
         
-      <circle cx="158.4" cy="94.3" r="3" fill="#f85149"/>
+      <circle cx="158.4" cy="94.3" r="4" fill="#ff5c5c" class="pulse-dot" style="animation-delay:660ms"/>
       <text x="66.0" y="128" font-size="9" fill="#8b949e" text-anchor="middle">C1</text>
       <text x="158.4" y="128" font-size="9" fill="#e6edf3" text-anchor="middle">C2</text>
     </svg>
@@ -332,27 +744,88 @@
           </div>
         </div>
         
-        <div class="card buy" data-bias="BUY">
+        <div class="card buy" data-bias="BUY" style="animation-delay:450ms">
+          <div class="scan-sweep"></div>
           <div class="card-header">
-            <span class="pair">AUDJPY</span>
-            <span class="badge buy">BUY</span>
+            <span class="pair">🇦🇺🇯🇵 AUDJPY</span>
+            <span class="badge buy"><span class="badge-dot"></span>BUY</span>
           </div>
           <div class="reason">Swept prior high and closed above it (confirmed breakout)</div>
+          <div class="trader-wrap">
+    <svg width="100%" height="auto" viewBox="0 0 220 170" class="trader-scene" style="animation-delay:450ms">
+      <!-- desk, viewed from directly above -->
+      <rect x="8" y="8" width="204" height="154" rx="12" fill="#1b2130" stroke="#2a3142" stroke-width="2"/>
+
+      <!-- coffee mug -->
+      <circle cx="30" cy="30" r="11" fill="#2a3142"/>
+      <circle cx="30" cy="30" r="7" fill="#171c28"/>
+      <rect x="39" y="27" width="7" height="6" rx="3" fill="#2a3142"/>
+
+      <!-- small plant -->
+      <circle cx="192" cy="28" r="12" fill="#232a3a"/>
+      <circle cx="187" cy="22" r="6" fill="#3fa15f"/>
+      <circle cx="196" cy="20" r="6" fill="#2f8a4e"/>
+      <circle cx="197" cy="30" r="6" fill="#3fa15f"/>
+
+      <!-- monitor -->
+      <rect x="70" y="18" width="80" height="56" rx="7" fill="#11151f" stroke="#2a3142" stroke-width="3"/>
+      <rect x="78" y="27" width="64" height="40" rx="3" fill="#0a0d14" stroke="#3fe074" stroke-width="2"
+            class="screen" style="--glow:#3fe074"/>
+      <polygon points="110,34 85,60 135,60" fill="#3fe074"/>
+      <rect x="102" y="76" width="16" height="7" rx="2" fill="#2a3142"/>
+
+      <!-- keyboard -->
+      <rect x="76" y="92" width="68" height="22" rx="4" fill="#232a3a" stroke="#2a3142" stroke-width="1.5"/>
+      <rect x="82" y="97" width="56" height="3" rx="1.5" fill="#333c50"/>
+      <rect x="82" y="103" width="56" height="3" rx="1.5" fill="#333c50"/>
+
+      <!-- mouse pad + mouse -->
+      <rect x="150" y="88" width="30" height="40" rx="7" fill="#1b2130" stroke="#2a3142" stroke-width="1.5"/>
+      <ellipse cx="165" cy="104" rx="8" ry="13" fill="#2a3142" stroke="#333c50" stroke-width="1.5"/>
+
+      <!-- chair back, seen from above as a ring behind the person -->
+      <ellipse cx="110" cy="138" rx="42" ry="36" fill="#171c28"/>
+
+      <g class="person">
+        <!-- shoulders / torso -->
+        <ellipse cx="110" cy="132" rx="32" ry="26" fill="#8b96a8"/>
+
+        <!-- arms reaching forward to the keyboard -->
+        <path d="M86,120 Q74,104 84,96" stroke="#8b96a8" stroke-width="12" fill="none"
+              stroke-linecap="round" class="hand"/>
+        <path d="M134,120 Q146,104 136,96" stroke="#8b96a8" stroke-width="12" fill="none"
+              stroke-linecap="round" class="hand" style="animation-delay:0.25s"/>
+        <circle cx="84" cy="96" r="7" fill="#cdd5e0" class="hand"/>
+        <circle cx="136" cy="96" r="7" fill="#cdd5e0" class="hand" style="animation-delay:0.25s"/>
+
+        <!-- head + headphones -->
+        <path d="M91,113 a19,12 0 0,1 38,0" fill="none" stroke="#2a3142" stroke-width="4"/>
+        <circle cx="91" cy="115" r="6" fill="#2a3142"/>
+        <circle cx="129" cy="115" r="6" fill="#2a3142"/>
+        <circle cx="110" cy="112" r="19" fill="#cdd5e0"/>
+        <path d="M94,102 a16,13 0 0,1 32,0" fill="none" stroke="#b7c0cf" stroke-width="3"/>
+      </g>
+    </svg>
+    </div>
           
     <svg width="220" height="130" viewBox="0 0 220 130" class="mini-chart">
       
-      <line x1="4" y1="55.3" x2="216" y2="55.3" stroke="#8b949e" stroke-width="1" stroke-dasharray="3,3"/>
-      <line x1="4" y1="107.5" x2="216" y2="107.5" stroke="#8b949e" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="4" y1="55.3" x2="216" y2="55.3" stroke="#4a5568" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="4" y1="107.5" x2="216" y2="107.5" stroke="#4a5568" stroke-width="1" stroke-dasharray="3,3"/>
     
       
-          <line x1="66.0" y1="55.3" x2="66.0" y2="107.5" stroke="#f85149" stroke-width="2" opacity="0.55"/>
-          <rect x="53.0" y="75.9" width="26" height="11.0" fill="#f85149" opacity="0.55"/>
+          <g class="draw-in candle-glow-sell" style="animation-delay:450ms">
+            <line x1="66.0" y1="55.3" x2="66.0" y2="107.5" stroke="#ff5c5c" stroke-width="2" opacity="0.5"/>
+            <rect x="53.0" y="75.9" width="26" height="11.0" rx="2" fill="#ff5c5c" opacity="0.5"/>
+          </g>
         
       
-          <line x1="158.4" y1="22.5" x2="158.4" y2="98.9" stroke="#3fb950" stroke-width="2" opacity="1"/>
-          <rect x="145.4" y="23.2" width="26" height="72.3" fill="#3fb950" opacity="1"/>
+          <g class="draw-in candle-glow-buy" style="animation-delay:600ms">
+            <line x1="158.4" y1="22.5" x2="158.4" y2="98.9" stroke="#3fe074" stroke-width="2" opacity="1"/>
+            <rect x="145.4" y="23.2" width="26" height="72.3" rx="2" fill="#3fe074" opacity="1"/>
+          </g>
         
-      <circle cx="158.4" cy="23.2" r="3" fill="#3fb950"/>
+      <circle cx="158.4" cy="23.2" r="4" fill="#3fe074" class="pulse-dot" style="animation-delay:750ms"/>
       <text x="66.0" y="128" font-size="9" fill="#8b949e" text-anchor="middle">C1</text>
       <text x="158.4" y="128" font-size="9" fill="#e6edf3" text-anchor="middle">C2</text>
     </svg>
@@ -372,27 +845,88 @@
           </div>
         </div>
         
-        <div class="card sell" data-bias="SELL">
+        <div class="card sell" data-bias="SELL" style="animation-delay:540ms">
+          <div class="scan-sweep"></div>
           <div class="card-header">
-            <span class="pair">USDJPY</span>
-            <span class="badge sell">SELL</span>
+            <span class="pair">🇺🇸🇯🇵 USDJPY</span>
+            <span class="badge sell"><span class="badge-dot"></span>SELL</span>
           </div>
           <div class="reason">Swept prior high but closed back below it (failed breakout / reversal)</div>
+          <div class="trader-wrap">
+    <svg width="100%" height="auto" viewBox="0 0 220 170" class="trader-scene" style="animation-delay:540ms">
+      <!-- desk, viewed from directly above -->
+      <rect x="8" y="8" width="204" height="154" rx="12" fill="#1b2130" stroke="#2a3142" stroke-width="2"/>
+
+      <!-- coffee mug -->
+      <circle cx="30" cy="30" r="11" fill="#2a3142"/>
+      <circle cx="30" cy="30" r="7" fill="#171c28"/>
+      <rect x="39" y="27" width="7" height="6" rx="3" fill="#2a3142"/>
+
+      <!-- small plant -->
+      <circle cx="192" cy="28" r="12" fill="#232a3a"/>
+      <circle cx="187" cy="22" r="6" fill="#3fa15f"/>
+      <circle cx="196" cy="20" r="6" fill="#2f8a4e"/>
+      <circle cx="197" cy="30" r="6" fill="#3fa15f"/>
+
+      <!-- monitor -->
+      <rect x="70" y="18" width="80" height="56" rx="7" fill="#11151f" stroke="#2a3142" stroke-width="3"/>
+      <rect x="78" y="27" width="64" height="40" rx="3" fill="#0a0d14" stroke="#ff5c5c" stroke-width="2"
+            class="screen" style="--glow:#ff5c5c"/>
+      <polygon points="110,60 85,34 135,34" fill="#ff5c5c"/>
+      <rect x="102" y="76" width="16" height="7" rx="2" fill="#2a3142"/>
+
+      <!-- keyboard -->
+      <rect x="76" y="92" width="68" height="22" rx="4" fill="#232a3a" stroke="#2a3142" stroke-width="1.5"/>
+      <rect x="82" y="97" width="56" height="3" rx="1.5" fill="#333c50"/>
+      <rect x="82" y="103" width="56" height="3" rx="1.5" fill="#333c50"/>
+
+      <!-- mouse pad + mouse -->
+      <rect x="150" y="88" width="30" height="40" rx="7" fill="#1b2130" stroke="#2a3142" stroke-width="1.5"/>
+      <ellipse cx="165" cy="104" rx="8" ry="13" fill="#2a3142" stroke="#333c50" stroke-width="1.5"/>
+
+      <!-- chair back, seen from above as a ring behind the person -->
+      <ellipse cx="110" cy="138" rx="42" ry="36" fill="#171c28"/>
+
+      <g class="person">
+        <!-- shoulders / torso -->
+        <ellipse cx="110" cy="132" rx="32" ry="26" fill="#8b96a8"/>
+
+        <!-- arms reaching forward to the keyboard -->
+        <path d="M86,120 Q74,104 84,96" stroke="#8b96a8" stroke-width="12" fill="none"
+              stroke-linecap="round" class="hand"/>
+        <path d="M134,120 Q146,104 136,96" stroke="#8b96a8" stroke-width="12" fill="none"
+              stroke-linecap="round" class="hand" style="animation-delay:0.25s"/>
+        <circle cx="84" cy="96" r="7" fill="#cdd5e0" class="hand"/>
+        <circle cx="136" cy="96" r="7" fill="#cdd5e0" class="hand" style="animation-delay:0.25s"/>
+
+        <!-- head + headphones -->
+        <path d="M91,113 a19,12 0 0,1 38,0" fill="none" stroke="#2a3142" stroke-width="4"/>
+        <circle cx="91" cy="115" r="6" fill="#2a3142"/>
+        <circle cx="129" cy="115" r="6" fill="#2a3142"/>
+        <circle cx="110" cy="112" r="19" fill="#cdd5e0"/>
+        <path d="M94,102 a16,13 0 0,1 32,0" fill="none" stroke="#b7c0cf" stroke-width="3"/>
+      </g>
+    </svg>
+    </div>
           
     <svg width="220" height="130" viewBox="0 0 220 130" class="mini-chart">
       
-      <line x1="4" y1="28.5" x2="216" y2="28.5" stroke="#8b949e" stroke-width="1" stroke-dasharray="3,3"/>
-      <line x1="4" y1="107.5" x2="216" y2="107.5" stroke="#8b949e" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="4" y1="28.5" x2="216" y2="28.5" stroke="#4a5568" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="4" y1="107.5" x2="216" y2="107.5" stroke="#4a5568" stroke-width="1" stroke-dasharray="3,3"/>
     
       
-          <line x1="66.0" y1="28.5" x2="66.0" y2="107.5" stroke="#f85149" stroke-width="2" opacity="0.55"/>
-          <rect x="53.0" y="61.7" width="26" height="10.5" fill="#f85149" opacity="0.55"/>
+          <g class="draw-in candle-glow-sell" style="animation-delay:540ms">
+            <line x1="66.0" y1="28.5" x2="66.0" y2="107.5" stroke="#ff5c5c" stroke-width="2" opacity="0.5"/>
+            <rect x="53.0" y="61.7" width="26" height="10.5" rx="2" fill="#ff5c5c" opacity="0.5"/>
+          </g>
         
       
-          <line x1="158.4" y1="22.5" x2="158.4" y2="84.7" stroke="#3fb950" stroke-width="2" opacity="1"/>
-          <rect x="145.4" y="35.2" width="26" height="45.0" fill="#3fb950" opacity="1"/>
+          <g class="draw-in candle-glow-buy" style="animation-delay:690ms">
+            <line x1="158.4" y1="22.5" x2="158.4" y2="84.7" stroke="#3fe074" stroke-width="2" opacity="1"/>
+            <rect x="145.4" y="35.2" width="26" height="45.0" rx="2" fill="#3fe074" opacity="1"/>
+          </g>
         
-      <circle cx="158.4" cy="35.2" r="3" fill="#f85149"/>
+      <circle cx="158.4" cy="35.2" r="4" fill="#ff5c5c" class="pulse-dot" style="animation-delay:840ms"/>
       <text x="66.0" y="128" font-size="9" fill="#8b949e" text-anchor="middle">C1</text>
       <text x="158.4" y="128" font-size="9" fill="#e6edf3" text-anchor="middle">C2</text>
     </svg>
@@ -418,23 +952,25 @@
     Rules: Sweep + reclaim = reversal bias &middot; Sweep + close-through = continuation bias &middot; No sweep or sweep-both-closed-middle = AVOID
   </footer>
 
-  <script>
-    const buttons = document.querySelectorAll('.filter-btn');
-    const cards = document.querySelectorAll('.card');
-    buttons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        buttons.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        const filter = btn.dataset.filter;
-        cards.forEach(card => {
-          if (filter === 'ALL' || card.dataset.bias === filter) {
-            card.classList.remove('hidden');
-          } else {
-            card.classList.add('hidden');
-          }
-        });
+</div>
+
+<script>
+  const buttons = document.querySelectorAll('.filter-btn');
+  const cards = document.querySelectorAll('.card');
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      buttons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const filter = btn.dataset.filter;
+      cards.forEach(card => {
+        if (filter === 'ALL' || card.dataset.bias === filter) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
       });
     });
-  </script>
+  });
+</script>
 </body>
 </html>
