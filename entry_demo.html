@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>4H Entry Logic Demo — Sweep &amp; Engulf</title>
+<style>
+  body {
+    margin: 0; padding: 40px 24px; min-height: 100vh;
+    background: radial-gradient(circle at 20% 10%, #15202b, #0b0f14 60%);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color: #e5e7eb;
+  }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  .sub { color: #9ca3af; font-size: 14px; margin: 0 0 28px; max-width: 760px; line-height: 1.5; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; max-width: 1000px; }
+  .card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 16px;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.02), 0 8px 24px rgba(0,0,0,0.3);
+  }
+  .card-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .badge { font-size: 12px; font-weight: 700; letter-spacing: 0.04em; padding: 3px 10px; border-radius: 999px; }
+  .bias-tag { font-size: 11px; color: #9ca3af; }
+  .sub-tag { font-size: 11px; color: #6b7280; margin: 0 0 6px; font-style: italic; }
+  .chart { margin: 8px 0; }
+  .note { font-size: 12.5px; color: #cbd5e1; line-height: 1.5; margin: 8px 0 0; }
+</style>
+</head>
+<body>
+  <h1>4H Entry Logic — Sweep &amp; Engulf (XAUUSD, dummy numbers)</h1>
+  <p class="sub">
+    Wait for the 4H candle to sweep beyond the <em>previous</em> 4H candle's wick, then close back
+    in the direction of daily bias while fully engulfing the previous candle's body.
+    That close is the entry; the swept wick (± 1 pip) is the stop loss. If price sweeps but
+    doesn't fully reclaim past the prior candle's open, there's no valid entry yet — wait.
+  </p>
+  <div class="grid">
+    
+    <div class="card" style="--accent: #22c55e">
+      <div class="card-head">
+        <span class="badge" style="background:#22c55e22;color:#22c55e;border:1px solid #22c55e66">BUY</span>
+        <span class="bias-tag">Daily bias: BULLISH</span>
+      </div>
+      <p class="sub-tag">full engulf</p>
+      <div class="chart"><svg viewBox="0 0 300 260" width="100%" height="260">
+    <line x1="0" y1="160.0" x2="300" y2="160.0" stroke="#facc15" stroke-width="1.3" stroke-dasharray="6,4" opacity="0.8"/>
+    <text x="8" y="155.0" fill="#facc15" font-size="11" font-family="monospace">swept low 4180</text>
+    
+    <line x1="0" y1="101.66666666666666" x2="300" y2="101.66666666666666" stroke="#6b7280" stroke-width="1.3" stroke-dasharray="2,4" opacity="0.8"/>
+    <text x="8" y="96.66666666666666" fill="#6b7280" font-size="11" font-family="monospace">C1 open 4190</text>
+    
+    <line x1="68.0" y1="72.5" x2="68.0" y2="160.0" stroke="#ef4444" stroke-width="2.5"/>
+    <rect x="40" y="101.66666666666666" width="56" height="40.83333333333334" fill="#ef4444" fill-opacity="0.85" stroke="#ef4444" stroke-width="1.5" rx="2"/>
+    
+    <line x1="198.0" y1="43.33333333333334" x2="198.0" y2="206.66666666666666" stroke="#22c55e" stroke-width="2.5"/>
+    <rect x="170" y="55.0" width="56" height="122.5" fill="#22c55e" fill-opacity="0.85" stroke="#22c55e" stroke-width="1.5" rx="2"/>
+    <text x="62" y="252" fill="#9ca3af" font-size="12" text-anchor="middle" font-family="monospace">C1</text><text x="198" y="252" fill="#9ca3af" font-size="12" text-anchor="middle" font-family="monospace">C2</text>
+    <line x1="0" y1="55.0" x2="300" y2="55.0" stroke="#22c55e" stroke-width="1.3" stroke-dasharray="6,4" opacity="0.8"/>
+    <text x="8" y="50.0" fill="#22c55e" font-size="11" font-family="monospace">entry 4198</text>
+    
+    <line x1="0" y1="206.72500000000127" x2="300" y2="206.72500000000127" stroke="#ef4444" stroke-width="1.3" stroke-dasharray="6,4" opacity="0.8"/>
+    <text x="8" y="201.72500000000127" fill="#ef4444" font-size="11" font-family="monospace">stop 4171.99</text>
+    </svg></div>
+      <p class="note">C2 sweeps below C1's low (4180 → 4172), then closes at 4198 — fully engulfing C1's body (opens below C1 close 4183, closes above C1 open 4190). Entry = 4198 (close). Stop = 4171.99 (swept low − 1 pip).</p>
+    </div>
+    
+
+    <div class="card" style="--accent: #22c55e">
+      <div class="card-head">
+        <span class="badge" style="background:#22c55e22;color:#22c55e;border:1px solid #22c55e66">BUY</span>
+        <span class="bias-tag">Daily bias: BULLISH</span>
+      </div>
+      <p class="sub-tag">partial engulf — still valid</p>
+      <div class="chart"><svg viewBox="0 0 300 260" width="100%" height="260">
+    <line x1="0" y1="160.0" x2="300" y2="160.0" stroke="#facc15" stroke-width="1.3" stroke-dasharray="6,4" opacity="0.8"/>
+    <text x="8" y="155.0" fill="#facc15" font-size="11" font-family="monospace">swept low 4180</text>
+    
+    <line x1="0" y1="90.0" x2="300" y2="90.0" stroke="#6b7280" stroke-width="1.3" stroke-dasharray="2,4" opacity="0.8"/>
+    <text x="8" y="85.0" fill="#6b7280" font-size="11" font-family="monospace">C1 open 4190</text>
+    
+    <line x1="68.0" y1="55.0" x2="68.0" y2="160.0" stroke="#ef4444" stroke-width="2.5"/>
+    <rect x="40" y="90.0" width="56" height="14.0" fill="#ef4444" fill-opacity="0.85" stroke="#ef4444" stroke-width="1.5" rx="2"/>
+    
+    <line x1="198.0" y1="48.0" x2="198.0" y2="202.0" stroke="#22c55e" stroke-width="2.5"/>
+    <rect x="170" y="69.0" width="56" height="28.0" fill="#22c55e" fill-opacity="0.85" stroke="#22c55e" stroke-width="1.5" rx="2"/>
+    <text x="62" y="252" fill="#9ca3af" font-size="12" text-anchor="middle" font-family="monospace">C1</text><text x="198" y="252" fill="#9ca3af" font-size="12" text-anchor="middle" font-family="monospace">C2</text>
+    <line x1="0" y1="69.0" x2="300" y2="69.0" stroke="#22c55e" stroke-width="1.3" stroke-dasharray="6,4" opacity="0.8"/>
+    <text x="8" y="64.0" fill="#22c55e" font-size="11" font-family="monospace">entry 4193</text>
+    
+    <line x1="0" y1="202.07000000000153" x2="300" y2="202.07000000000153" stroke="#ef4444" stroke-width="1.3" stroke-dasharray="6,4" opacity="0.8"/>
+    <text x="8" y="197.07000000000153" fill="#ef4444" font-size="11" font-family="monospace">stop 4173.99</text>
+    </svg></div>
+      <p class="note">C2 sweeps below C1's low (4180 → 4174), then closes at 4193 — above C1's open (4190), so it's a valid entry even though C2's open (4189) is ABOVE C1's close (4188), meaning the body is NOT fully engulfed. Close beyond the prior open is enough. Entry = 4193. Stop = 4173.99.</p>
+    </div>
+    
+
+    <div class="card" style="--accent: #ef4444">
+      <div class="card-head">
+        <span class="badge" style="background:#ef444422;color:#ef4444;border:1px solid #ef444466">SELL</span>
+        <span class="bias-tag">Daily bias: BEARISH</span>
+      </div>
+      <p class="sub-tag">partial engulf — still valid</p>
+      <div class="chart"><svg viewBox="0 0 300 260" width="100%" height="260">
+    <line x1="0" y1="97.0" x2="300" y2="97.0" stroke="#facc15" stroke-width="1.3" stroke-dasharray="6,4" opacity="0.8"/>
+    <text x="8" y="92.0" fill="#facc15" font-size="11" font-family="monospace">swept high 4212</text>
+    
+    <line x1="0" y1="146.0" x2="300" y2="146.0" stroke="#6b7280" stroke-width="1.3" stroke-dasharray="2,4" opacity="0.8"/>
+    <text x="8" y="141.0" fill="#6b7280" font-size="11" font-family="monospace">C1 open 4205</text>
+    
+    <line x1="68.0" y1="97.0" x2="68.0" y2="181.0" stroke="#22c55e" stroke-width="2.5"/>
+    <rect x="40" y="132.0" width="56" height="14.0" fill="#22c55e" fill-opacity="0.85" stroke="#22c55e" stroke-width="1.5" rx="2"/>
+    
+    <line x1="198.0" y1="48.0" x2="198.0" y2="202.0" stroke="#ef4444" stroke-width="2.5"/>
+    <rect x="170" y="160.0" width="56" height="35.0" fill="#ef4444" fill-opacity="0.85" stroke="#ef4444" stroke-width="1.5" rx="2"/>
+    <text x="62" y="252" fill="#9ca3af" font-size="12" text-anchor="middle" font-family="monospace">C1</text><text x="198" y="252" fill="#9ca3af" font-size="12" text-anchor="middle" font-family="monospace">C2</text>
+    <line x1="0" y1="195.0" x2="300" y2="195.0" stroke="#22c55e" stroke-width="1.3" stroke-dasharray="6,4" opacity="0.8"/>
+    <text x="8" y="190.0" fill="#22c55e" font-size="11" font-family="monospace">entry 4198</text>
+    
+    <line x1="0" y1="47.92999999999847" x2="300" y2="47.92999999999847" stroke="#ef4444" stroke-width="1.3" stroke-dasharray="6,4" opacity="0.8"/>
+    <text x="8" y="42.92999999999847" fill="#ef4444" font-size="11" font-family="monospace">stop 4219.01</text>
+    </svg></div>
+      <p class="note">C2 sweeps above C1's high (4212 → 4219), then closes at 4198 — below C1's open (4205), so it's a valid entry even though C2's open (4203) is BELOW C1's close (4207), meaning the body is NOT fully engulfed. Entry = 4198. Stop = 4219.01.</p>
+    </div>
+    
+
+    <div class="card" style="--accent: #9ca3af">
+      <div class="card-head">
+        <span class="badge" style="background:#9ca3af22;color:#9ca3af;border:1px solid #9ca3af66">AVOID</span>
+        <span class="bias-tag">Daily bias: BULLISH</span>
+      </div>
+      <p class="sub-tag">no reclaim past prior open</p>
+      <div class="chart"><svg viewBox="0 0 300 260" width="100%" height="260">
+    <line x1="0" y1="165.3846153846154" x2="300" y2="165.3846153846154" stroke="#facc15" stroke-width="1.3" stroke-dasharray="6,4" opacity="0.8"/>
+    <text x="8" y="160.3846153846154" fill="#facc15" font-size="11" font-family="monospace">swept low 4182</text>
+    
+    <line x1="0" y1="100.76923076923077" x2="300" y2="100.76923076923077" stroke="#6b7280" stroke-width="1.3" stroke-dasharray="2,4" opacity="0.8"/>
+    <text x="8" y="95.76923076923077" fill="#6b7280" font-size="11" font-family="monospace">C1 open 4190</text>
+    
+    <line x1="68.0" y1="52.30769230769232" x2="68.0" y2="165.3846153846154" stroke="#22c55e" stroke-width="2.5"/>
+    <rect x="40" y="76.53846153846155" width="56" height="24.230769230769226" fill="#22c55e" fill-opacity="0.85" stroke="#22c55e" stroke-width="1.5" rx="2"/>
+    
+    <line x1="198.0" y1="116.92307692307693" x2="198.0" y2="197.69230769230768" stroke="#22c55e" stroke-width="2.5"/>
+    <rect x="170" y="133.07692307692307" width="56" height="24.230769230769255" fill="#22c55e" fill-opacity="0.85" stroke="#22c55e" stroke-width="1.5" rx="2"/>
+    <text x="62" y="252" fill="#9ca3af" font-size="12" text-anchor="middle" font-family="monospace">C1</text><text x="198" y="252" fill="#9ca3af" font-size="12" text-anchor="middle" font-family="monospace">C2</text></svg></div>
+      <p class="note">C2 sweeps below C1's low (4182 → 4178) but only closes at 4186 — it never reclaims back above C1's open (4190) at all. No entry — wait for the next 4H candle.</p>
+    </div>
+    
+  </div>
+</body>
+</html>
