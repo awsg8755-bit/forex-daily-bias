@@ -10,11 +10,21 @@ on:
 permissions:
   contents: write
 
+# Never run two refreshes at once - they would race each other on push.
+concurrency:
+  group: refresh-dashboard
+  cancel-in-progress: false
+
 jobs:
   refresh:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Always build on the latest main. Without this, a "Re-run" checks
+          # out the run's original commit and the final push gets rejected
+          # once main has moved on.
+          ref: main
 
       - uses: actions/setup-python@v5
         with:
@@ -60,4 +70,4 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add data/candles.json dashboard.html
           git diff --cached --quiet || git commit -m "Auto-refresh daily bias dashboard"
-          git push
+          git push origin HEAD:main
