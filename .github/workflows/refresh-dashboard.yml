@@ -1,0 +1,63 @@
+name: Refresh daily bias dashboard
+
+on:
+  schedule:
+    # 21:00 UTC = 7:00am Brisbane (AEST, UTC+10) - right when the daily
+    # candle closes, so the refreshed data reflects the brand new candle.
+    - cron: '0 21 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Refresh cTrader access token
+        id: refresh
+        run: |
+          RESPONSE=$(curl -s -X POST https://openapi.ctrader.com/apps/token \
+            -d grant_type=refresh_token \
+            -d refresh_token="${{ secrets.CTRADER_REFRESH_TOKEN }}" \
+            -d client_id="${{ secrets.CTRADER_CLIENT_ID }}" \
+            -d client_secret="${{ secrets.CTRADER_CLIENT_SECRET }}")
+          ACCESS_TOKEN=$(echo "$RESPONSE" | python3 -c "import sys,json; print(json.load(sys.stdin)['accessToken'])")
+          NEW_REFRESH_TOKEN=$(echo "$RESPONSE" | python3 -c "import sys,json; print(json.load(sys.stdin)['refreshToken'])")
+          echo "::add-mask::$ACCESS_TOKEN"
+          echo "::add-mask::$NEW_REFRESH_TOKEN"
+          echo "CTRADER_ACCESS_TOKEN=$ACCESS_TOKEN" >> "$GITHUB_ENV"
+          echo "new_refresh_token=$NEW_REFRESH_TOKEN" >> "$GITHUB_OUTPUT"
+
+      - name: Persist rotated refresh token
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+        run: |
+          gh secret set CTRADER_REFRESH_TOKEN --repo ${{ github.repository }} \
+            --body "${{ steps.refresh.outputs.new_refresh_token }}"
+
+      - name: Fetch daily candles
+        env:
+          CTRADER_CLIENT_ID: ${{ secrets.CTRADER_CLIENT_ID }}
+          CTRADER_CLIENT_SECRET: ${{ secrets.CTRADER_CLIENT_SECRET }}
+        run: python3 fetch_daily_candles.py
+
+      - name: Generate dashboard
+        run: python3 generate_dashboard.py
+
+      - name: Commit and push updates
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/candles.json dashboard.html
+          git diff --cached --quiet || git commit -m "Auto-refresh daily bias dashboard"
+          git push
