@@ -1,105 +1,105 @@
 {
   "updated": "2026-10-16",
   "source": "cTrader Open API (Pepperstone, Daily TF, 7am Brisbane candle)",
-  "candle1_label": "Wednesday",
-  "candle2_label": "Thursday",
+  "candle1_label": "Thursday",
+  "candle2_label": "Friday",
   "pairs": {
     "XAUUSD": {
       "candle1": {
-        "open": 4161.79,
-        "high": 4170.54,
-        "low": 4073.41,
-        "close": 4104.88
-      },
-      "candle2": {
         "open": 4106.06,
         "high": 4177.530000000001,
         "low": 4099.76,
         "close": 4170.58
+      },
+      "candle2": {
+        "open": 4171.85,
+        "high": 4198.82,
+        "low": 4147.25,
+        "close": 4163.95
       }
     },
     "GBPJPY": {
       "candle1": {
-        "open": 209.70100000000002,
-        "high": 210.31,
-        "low": 208.36,
-        "close": 208.89700000000002
-      },
-      "candle2": {
         "open": 208.58499999999998,
         "high": 209.95899999999997,
         "low": 208.569,
         "close": 209.75
+      },
+      "candle2": {
+        "open": 209.495,
+        "high": 210.966,
+        "low": 209.481,
+        "close": 210.54399999999998
       }
     },
     "GBPUSD": {
       "candle1": {
-        "open": 1.3244099999999999,
-        "high": 1.32754,
-        "low": 1.31367,
-        "close": 1.31938
-      },
-      "candle2": {
         "open": 1.31836,
         "high": 1.32781,
         "low": 1.31789,
         "close": 1.32765
+      },
+      "candle2": {
+        "open": 1.32635,
+        "high": 1.33716,
+        "low": 1.32609,
+        "close": 1.33273
       }
     },
     "EURGBP": {
       "candle1": {
-        "open": 0.8441299999999999,
-        "high": 0.8462299999999999,
-        "low": 0.84266,
-        "close": 0.8454999999999999
-      },
-      "candle2": {
         "open": 0.84468,
         "high": 0.84778,
         "low": 0.84459,
         "close": 0.8451799999999999
+      },
+      "candle2": {
+        "open": 0.84458,
+        "high": 0.8452999999999999,
+        "low": 0.84188,
+        "close": 0.84329
       }
     },
     "EURUSD": {
       "candle1": {
-        "open": 1.11927,
-        "high": 1.12115,
-        "low": 1.11127,
-        "close": 1.11565
-      },
-      "candle2": {
         "open": 1.11471,
         "high": 1.1241100000000002,
         "low": 1.11461,
         "close": 1.12216
+      },
+      "candle2": {
+        "open": 1.12132,
+        "high": 1.12694,
+        "low": 1.1208,
+        "close": 1.12387
       }
     },
     "AUDJPY": {
       "candle1": {
-        "open": 110.488,
-        "high": 111.129,
-        "low": 110.138,
-        "close": 110.38900000000001
-      },
-      "candle2": {
         "open": 110.256,
         "high": 110.387,
         "low": 108.633,
         "close": 109.347
+      },
+      "candle2": {
+        "open": 109.248,
+        "high": 110.058,
+        "low": 109.215,
+        "close": 109.696
       }
     },
     "USDJPY": {
       "candle1": {
-        "open": 158.298,
-        "high": 158.95000000000002,
-        "low": 158.044,
-        "close": 158.328
-      },
-      "candle2": {
         "open": 158.227,
         "high": 158.328,
         "low": 157.544,
         "close": 157.98600000000002
+      },
+      "candle2": {
+        "open": 157.96,
+        "high": 158.341,
+        "low": 157.691,
+        "close": 157.98
       }
     }
   },
