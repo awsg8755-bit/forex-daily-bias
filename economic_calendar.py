@@ -19,12 +19,8 @@ IMPACT_LEVELS = {"High", "Medium"}
 
 PAIR_CURRENCIES = {
     "XAUUSD": ["USD"],
-    "GBPJPY": ["GBP", "JPY"],
-    "GBPUSD": ["GBP", "USD"],
     "EURGBP": ["EUR", "GBP"],
-    "EURUSD": ["EUR", "USD"],
     "AUDJPY": ["AUD", "JPY"],
-    "USDJPY": ["USD", "JPY"],
 }
 
 

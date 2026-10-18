@@ -23,12 +23,8 @@ BADGE_CLASS = {"BUY": "buy", "SELL": "sell", "AVOID": "avoid"}
 
 FLAGS = {
     "XAUUSD": "🥇",
-    "GBPJPY": "🇬🇧🇯🇵",
-    "GBPUSD": "🇬🇧🇺🇸",
     "EURGBP": "🇪🇺🇬🇧",
-    "EURUSD": "🇪🇺🇺🇸",
     "AUDJPY": "🇦🇺🇯🇵",
-    "USDJPY": "🇺🇸🇯🇵",
 }
 
 CHART_W = 220
@@ -201,7 +197,7 @@ def render_html(data, rows):
         delay = i * 90
 
         events = r.get("events", [])
-        event_badge = ""
+        event_badge = '<span class="event-badge none">📅 No major news</span>'
         if events:
             highest_high = any(e["impact"] == "High" for e in events)
             badge_cls = "high" if highest_high else "medium"
@@ -412,6 +408,7 @@ def render_html(data, rows):
   }}
   .event-badge.high {{ color: var(--sell); background: rgba(255,92,92,0.1); animation: badge-pulse 1.6s ease-in-out infinite; }}
   .event-badge.medium {{ color: #f5a623; background: rgba(245,166,35,0.1); }}
+  .event-badge.none {{ color: rgba(255,255,255,0.35); border-color: rgba(255,255,255,0.15); }}
   @keyframes badge-pulse {{ 0%,100% {{ box-shadow: 0 0 0 rgba(255,92,92,0); }} 50% {{ box-shadow: 0 0 8px rgba(255,92,92,0.5); }} }}
   .event-tooltip {{
     position: absolute; top: calc(100% + 8px); right: -8px; z-index: 30;
