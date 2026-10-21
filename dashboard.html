@@ -255,12 +255,12 @@
     <h1>Daily Bias Agent</h1>
     <span class="live-badge"><span class="live-dot"></span>LIVE</span>
   </header>
-  <div class="subtitle">Generated 2026-10-20 23:38 &middot; Source: cTrader Open API (Pepperstone, Daily TF, 7am Brisbane candle)</div>
+  <div class="subtitle">Generated 2026-10-21 21:46 &middot; Source: cTrader Open API (Pepperstone, Daily TF, 7am Brisbane candle)</div>
 
   <div class="summary-bar">
     <div class="summary-counts">
-      <span><span class="count-buy">1</span> BUY</span>
-      <span><span class="count-sell">2</span> SELL</span>
+      <span><span class="count-buy">3</span> BUY</span>
+      <span><span class="count-sell">0</span> SELL</span>
       <span><span class="count-avoid">0</span> AVOID</span>
     </div>
     <button class="filter-btn active" data-filter="ALL">All</button>
@@ -271,16 +271,16 @@
 
   <div class="grid" id="grid">
     
-        <div class="card sell" data-bias="SELL" style="animation-delay:0ms">
+        <div class="card buy" data-bias="BUY" style="animation-delay:0ms">
           <div class="scan-sweep"></div>
           <div class="card-header">
             <span class="pair">🥇 XAUUSD</span>
             <div class="header-right">
-              <span class="event-badge none">📅 No major news</span>
-              <span class="badge sell"><span class="badge-dot"></span>SELL</span>
+              <span class="event-badge-wrap"><span class="event-badge medium">📅 1</span><div class="event-tooltip"><div class="event-row medium"><span class="event-time">10:30PM</span><span class="event-ccy">USD</span><span class="event-name">Unemployment Claims</span></div></div></span>
+              <span class="badge buy"><span class="badge-dot"></span>BUY</span>
             </div>
           </div>
-          <div class="reason">Swept prior low and closed below it (confirmed breakdown)</div>
+          <div class="reason">Swept prior low but closed back above it (failed breakdown / reversal)</div>
           <div class="trader-wrap">
     <svg width="100%" height="auto" viewBox="0 0 220 170" class="trader-scene" style="animation-delay:0ms">
       <!-- desk, viewed from directly above -->
@@ -299,9 +299,9 @@
 
       <!-- monitor -->
       <rect x="70" y="18" width="80" height="56" rx="7" fill="#11151f" stroke="#2a3142" stroke-width="3"/>
-      <rect x="78" y="27" width="64" height="40" rx="3" fill="#0a0d14" stroke="#ff5c5c" stroke-width="2"
-            class="screen" style="--glow:#ff5c5c"/>
-      <polygon points="110,60 85,34 135,34" fill="#ff5c5c"/>
+      <rect x="78" y="27" width="64" height="40" rx="3" fill="#0a0d14" stroke="#3fe074" stroke-width="2"
+            class="screen" style="--glow:#3fe074"/>
+      <polygon points="110,34 85,60 135,60" fill="#3fe074"/>
       <rect x="102" y="76" width="16" height="7" rx="2" fill="#2a3142"/>
 
       <!-- keyboard -->
@@ -341,36 +341,36 @@
     <svg width="220" height="130" viewBox="0 0 220 130" class="mini-chart">
       
       <line x1="4" y1="22.5" x2="216" y2="22.5" stroke="#4a5568" stroke-width="1" stroke-dasharray="3,3"/>
-      <line x1="4" y1="80.6" x2="216" y2="80.6" stroke="#4a5568" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="4" y1="96.4" x2="216" y2="96.4" stroke="#4a5568" stroke-width="1" stroke-dasharray="3,3"/>
     
       
           <g class="draw-in candle-glow-sell" style="animation-delay:0ms">
-            <line x1="66.0" y1="22.5" x2="66.0" y2="80.6" stroke="#ff5c5c" stroke-width="2" opacity="0.5"/>
-            <rect x="53.0" y="52.1" width="26" height="23.999999999999993" rx="2" fill="#ff5c5c" opacity="0.5"/>
+            <line x1="66.0" y1="22.5" x2="66.0" y2="96.4" stroke="#ff5c5c" stroke-width="2" opacity="0.5"/>
+            <rect x="53.0" y="43.2" width="26" height="30.700000000000003" rx="2" fill="#ff5c5c" opacity="0.5"/>
           </g>
         
       
-          <g class="draw-in candle-glow-sell" style="animation-delay:150ms">
-            <line x1="158.4" y1="60.0" x2="158.4" y2="107.5" stroke="#ff5c5c" stroke-width="2" opacity="1"/>
-            <rect x="145.4" y="73.3" width="26" height="19.700000000000003" rx="2" fill="#ff5c5c" opacity="1"/>
+          <g class="draw-in candle-glow-buy" style="animation-delay:150ms">
+            <line x1="158.4" y1="45.2" x2="158.4" y2="107.5" stroke="#3fe074" stroke-width="2" opacity="1"/>
+            <rect x="145.4" y="46.6" width="26" height="23.699999999999996" rx="2" fill="#3fe074" opacity="1"/>
           </g>
         
-      <circle cx="158.4" cy="93.0" r="4" fill="#ff5c5c" class="pulse-dot" style="animation-delay:300ms"/>
+      <circle cx="158.4" cy="46.6" r="4" fill="#3fe074" class="pulse-dot" style="animation-delay:300ms"/>
       <text x="66.0" y="128" font-size="9" fill="#8b949e" text-anchor="middle">C1</text>
       <text x="158.4" y="128" font-size="9" fill="#e6edf3" text-anchor="middle">C2</text>
     </svg>
     
           <div class="candles">
             <div class="candle">
-              <span class="label">Monday (C1)</span>
-              <span>H 4190.53</span>
-              <span>L 4136.57</span>
-            </div>
-            <div class="candle">
-              <span class="label">Tuesday (C2)</span>
+              <span class="label">Tuesday (C1)</span>
               <span>H 4155.68</span>
               <span>L 4111.56</span>
-              <span>C 4125.01</span>
+            </div>
+            <div class="candle">
+              <span class="label">Wednesday (C2)</span>
+              <span>H 4142.12</span>
+              <span>L 4104.96</span>
+              <span>C 4141.29</span>
             </div>
           </div>
         </div>
@@ -380,7 +380,7 @@
           <div class="card-header">
             <span class="pair">🇪🇺🇬🇧 EURGBP</span>
             <div class="header-right">
-              <span class="event-badge-wrap"><span class="event-badge high">📅 2</span><div class="event-tooltip"><div class="event-row medium"><span class="event-time">11:00PM</span><span class="event-ccy">GBP</span><span class="event-name">BOE Gov Bailey Speaks</span></div><div class="event-row high"><span class="event-time">4:00PM</span><span class="event-ccy">GBP</span><span class="event-name">CPI y/y</span></div></div></span>
+              <span class="event-badge none">📅 No major news</span>
               <span class="badge buy"><span class="badge-dot"></span>BUY</span>
             </div>
           </div>
@@ -445,50 +445,50 @@
     <svg width="220" height="130" viewBox="0 0 220 130" class="mini-chart">
       
       <line x1="4" y1="22.5" x2="216" y2="22.5" stroke="#4a5568" stroke-width="1" stroke-dasharray="3,3"/>
-      <line x1="4" y1="83.6" x2="216" y2="83.6" stroke="#4a5568" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="4" y1="87.8" x2="216" y2="87.8" stroke="#4a5568" stroke-width="1" stroke-dasharray="3,3"/>
     
       
-          <g class="draw-in candle-glow-buy" style="animation-delay:90ms">
-            <line x1="66.0" y1="22.5" x2="66.0" y2="83.6" stroke="#3fe074" stroke-width="2" opacity="0.5"/>
-            <rect x="53.0" y="26.7" width="26" height="38.7" rx="2" fill="#3fe074" opacity="0.5"/>
+          <g class="draw-in candle-glow-sell" style="animation-delay:90ms">
+            <line x1="66.0" y1="22.5" x2="66.0" y2="87.8" stroke="#ff5c5c" stroke-width="2" opacity="0.5"/>
+            <rect x="53.0" y="31.6" width="26" height="34.9" rx="2" fill="#ff5c5c" opacity="0.5"/>
           </g>
         
       
           <g class="draw-in candle-glow-sell" style="animation-delay:240ms">
-            <line x1="158.4" y1="25.4" x2="158.4" y2="107.5" stroke="#ff5c5c" stroke-width="2" opacity="1"/>
-            <rect x="145.4" y="36.9" width="26" height="43.800000000000004" rx="2" fill="#ff5c5c" opacity="1"/>
+            <line x1="158.4" y1="64.4" x2="158.4" y2="107.5" stroke="#ff5c5c" stroke-width="2" opacity="1"/>
+            <rect x="145.4" y="76.4" width="26" height="9.199999999999989" rx="2" fill="#ff5c5c" opacity="1"/>
           </g>
         
-      <circle cx="158.4" cy="80.7" r="4" fill="#3fe074" class="pulse-dot" style="animation-delay:390ms"/>
+      <circle cx="158.4" cy="85.6" r="4" fill="#3fe074" class="pulse-dot" style="animation-delay:390ms"/>
       <text x="66.0" y="128" font-size="9" fill="#8b949e" text-anchor="middle">C1</text>
       <text x="158.4" y="128" font-size="9" fill="#e6edf3" text-anchor="middle">C2</text>
     </svg>
     
           <div class="candles">
             <div class="candle">
-              <span class="label">Monday (C1)</span>
-              <span>H 0.84289</span>
-              <span>L 0.8397</span>
-            </div>
-            <div class="candle">
-              <span class="label">Tuesday (C2)</span>
+              <span class="label">Tuesday (C1)</span>
               <span>H 0.84274</span>
               <span>L 0.83845</span>
-              <span>C 0.83985</span>
+            </div>
+            <div class="candle">
+              <span class="label">Wednesday (C2)</span>
+              <span>H 0.83999</span>
+              <span>L 0.83716</span>
+              <span>C 0.8386</span>
             </div>
           </div>
         </div>
         
-        <div class="card sell" data-bias="SELL" style="animation-delay:180ms">
+        <div class="card buy" data-bias="BUY" style="animation-delay:180ms">
           <div class="scan-sweep"></div>
           <div class="card-header">
             <span class="pair">🇦🇺🇯🇵 AUDJPY</span>
             <div class="header-right">
               <span class="event-badge none">📅 No major news</span>
-              <span class="badge sell"><span class="badge-dot"></span>SELL</span>
+              <span class="badge buy"><span class="badge-dot"></span>BUY</span>
             </div>
           </div>
-          <div class="reason">Swept prior high but closed back below it (failed breakout / reversal)</div>
+          <div class="reason">Swept prior high and closed above it (confirmed breakout)</div>
           <div class="trader-wrap">
     <svg width="100%" height="auto" viewBox="0 0 220 170" class="trader-scene" style="animation-delay:180ms">
       <!-- desk, viewed from directly above -->
@@ -507,9 +507,9 @@
 
       <!-- monitor -->
       <rect x="70" y="18" width="80" height="56" rx="7" fill="#11151f" stroke="#2a3142" stroke-width="3"/>
-      <rect x="78" y="27" width="64" height="40" rx="3" fill="#0a0d14" stroke="#ff5c5c" stroke-width="2"
-            class="screen" style="--glow:#ff5c5c"/>
-      <polygon points="110,60 85,34 135,34" fill="#ff5c5c"/>
+      <rect x="78" y="27" width="64" height="40" rx="3" fill="#0a0d14" stroke="#3fe074" stroke-width="2"
+            class="screen" style="--glow:#3fe074"/>
+      <polygon points="110,34 85,60 135,60" fill="#3fe074"/>
       <rect x="102" y="76" width="16" height="7" rx="2" fill="#2a3142"/>
 
       <!-- keyboard -->
@@ -548,37 +548,37 @@
           
     <svg width="220" height="130" viewBox="0 0 220 130" class="mini-chart">
       
-      <line x1="4" y1="23.8" x2="216" y2="23.8" stroke="#4a5568" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="4" y1="65.3" x2="216" y2="65.3" stroke="#4a5568" stroke-width="1" stroke-dasharray="3,3"/>
       <line x1="4" y1="107.5" x2="216" y2="107.5" stroke="#4a5568" stroke-width="1" stroke-dasharray="3,3"/>
     
       
           <g class="draw-in candle-glow-buy" style="animation-delay:180ms">
-            <line x1="66.0" y1="23.8" x2="66.0" y2="107.5" stroke="#3fe074" stroke-width="2" opacity="0.5"/>
-            <rect x="53.0" y="36.6" width="26" height="57.4" rx="2" fill="#3fe074" opacity="0.5"/>
+            <line x1="66.0" y1="65.3" x2="66.0" y2="107.5" stroke="#3fe074" stroke-width="2" opacity="0.5"/>
+            <rect x="53.0" y="68.5" width="26" height="23.900000000000006" rx="2" fill="#3fe074" opacity="0.5"/>
           </g>
         
       
           <g class="draw-in candle-glow-buy" style="animation-delay:330ms">
-            <line x1="158.4" y1="22.5" x2="158.4" y2="60.3" stroke="#3fe074" stroke-width="2" opacity="1"/>
-            <rect x="145.4" y="25.3" width="26" height="21.400000000000002" rx="2" fill="#3fe074" opacity="1"/>
+            <line x1="158.4" y1="22.5" x2="158.4" y2="81.8" stroke="#3fe074" stroke-width="2" opacity="1"/>
+            <rect x="145.4" y="33.6" width="26" height="48.1" rx="2" fill="#3fe074" opacity="1"/>
           </g>
         
-      <circle cx="158.4" cy="25.3" r="4" fill="#ff5c5c" class="pulse-dot" style="animation-delay:480ms"/>
+      <circle cx="158.4" cy="33.6" r="4" fill="#3fe074" class="pulse-dot" style="animation-delay:480ms"/>
       <text x="66.0" y="128" font-size="9" fill="#8b949e" text-anchor="middle">C1</text>
       <text x="158.4" y="128" font-size="9" fill="#e6edf3" text-anchor="middle">C2</text>
     </svg>
     
           <div class="candles">
             <div class="candle">
-              <span class="label">Monday (C1)</span>
-              <span>H 110.79</span>
-              <span>L 109.801</span>
-            </div>
-            <div class="candle">
-              <span class="label">Tuesday (C2)</span>
+              <span class="label">Tuesday (C1)</span>
               <span>H 110.80499999999999</span>
               <span>L 110.359</span>
-              <span>C 110.77199999999999</span>
+            </div>
+            <div class="candle">
+              <span class="label">Wednesday (C2)</span>
+              <span>H 111.258</span>
+              <span>L 110.631</span>
+              <span>C 111.141</span>
             </div>
           </div>
         </div>
