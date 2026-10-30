@@ -1,49 +1,49 @@
 {
-  "updated": "2026-10-29",
+  "updated": "2026-10-30",
   "source": "cTrader Open API (Pepperstone, Daily TF, 7am Brisbane candle)",
-  "candle1_label": "Tuesday",
-  "candle2_label": "Wednesday",
+  "candle1_label": "Wednesday",
+  "candle2_label": "Thursday",
   "pairs": {
     "XAUUSD": {
       "candle1": {
-        "open": 4017.32,
-        "high": 4065.79,
-        "low": 3989.04,
-        "close": 4060.32
-      },
-      "candle2": {
         "open": 4062.31,
         "high": 4082.89,
         "low": 4024.85,
         "close": 4067.2599999999998
+      },
+      "candle2": {
+        "open": 4066.96,
+        "high": 4069.06,
+        "low": 4005.27,
+        "close": 4021.52
       }
     },
     "EURGBP": {
       "candle1": {
-        "open": 0.83722,
-        "high": 0.83772,
-        "low": 0.836,
-        "close": 0.83611
-      },
-      "candle2": {
         "open": 0.8354900000000001,
         "high": 0.83808,
         "low": 0.83542,
         "close": 0.8369500000000001
+      },
+      "candle2": {
+        "open": 0.83611,
+        "high": 0.8372700000000001,
+        "low": 0.8345,
+        "close": 0.8357
       }
     },
     "AUDJPY": {
       "candle1": {
-        "open": 110.41900000000001,
-        "high": 111.083,
-        "low": 110.358,
-        "close": 110.965
-      },
-      "candle2": {
         "open": 110.847,
         "high": 111.49799999999999,
         "low": 110.829,
         "close": 111.32799999999999
+      },
+      "candle2": {
+        "open": 111.241,
+        "high": 111.563,
+        "low": 110.697,
+        "close": 110.84400000000001
       }
     }
   },
